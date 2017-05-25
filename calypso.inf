@@ -1,0 +1,1351 @@
+Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
+Constant Headline   "^A small text adventure from Papa's Gong.^";
+
+Release 5;
+
+Constant MANUAL_PRONOUNS;
+Constant MAX_SCORE  15;
+
+#Ifdef TARGET_GLULX;
+Constant GG_MAPWIN_ROCK 210;
+Global gg_mapwin = 0;
+Global gg_davewin = 0;
+Constant GG_DAVEWIN_ROCK 211;
+#Endif;
+
+Include "Parser";
+Include "VerbLib";
+Include "./InfGlk.h";
+
+Attribute legible;
+
+Constant NORTH_STRING = "north";
+Constant SOUTH_STRING = "south";
+Constant EAST_STRING = "east";
+Constant WEST_STRING = "west";
+
+! class   Coin(50)
+!  with   name 'metal' 'coin',
+!         short_name "metal coin",
+!         plural "metal coins";
+
+Object  cupboard_key "small key"
+ with   name 'small' 'key',
+        before [;
+         Take: if (~~(glove has worn))
+         {
+             "The key is too hot to pick up!";
+         }
+        ];
+
+Object  cheese "lump of old cheese"
+ with   name 'cheese',
+        description "A really old lump of cheese. It looks a bit too 
+            hard to eat, even for the determined mouse. It seems 
+            slightly heavier than you would expect.",
+        before [;
+         Search: "There seems to be something stuck in the cheese.";
+        ],
+        after [;
+  	     Eat:
+	        deadflag=true;
+	        "The cheese tastes a little off, and is shortly followed 
+            by strange visions, and death.";
+        ],
+ has    edible;
+
+
+Object  mouse "mouse",
+ with   name 'mouse',
+        description "The mouse seems relaxed having recently eaten 
+            his fill.",
+        after [;
+         Drop:"The mouse lands nimbly on his feet, before having a 
+            sniff around.";
+        ],
+ has    talkable;
+
+
+! ======= Lighthouse ======== !
+
+Object  top "Top of the lighthouse"
+ with   name 'glass',
+        description
+            "You are standing at the top of a lighthouse, with glass 
+            panels all around the circular room. It is pitch black 
+            outside and rain pounds the glass. The occasional 
+            lightning strike lights up the night sky giving you a 
+            brief glimpse of a lifeless horizon and a dark, empty 
+            sea. Steps lead downwards into the lighthouse.",
+        d_to  lounge,
+ has    light;
+
+Object  -> lighthouse_lamp "main lighthouse lamp"
+ private doorTrigger 0,
+ with   name 'main' 'light' 'lamp' 'lighthouse' 'lantern' 'lens',
+        article "the",
+        description "This impressive lantern occupies most of the 
+            room and consists of the lamp and a lens to warn any 
+            nearby ships.",
+        when_open "The main lighthouse lamp stands impressively in 
+            the centre of the room.",
+        before [;
+         SwitchOn:
+            if (~~(cog in self))
+            {
+                "There seems to be a cog missing, preventing the device 
+                from coming on.";
+            }
+         Receive:
+            if (~~(noun==cog))
+            {
+                "It doesn't fit.";
+            }
+        ],
+        after [;
+         SwitchOn:
+            if (self.doorTrigger==0)
+            {
+                StartTimer(lighthouseTimer,1);
+                self.doorTrigger=1;
+                bottom.visitorFlag=1; ! tell our story !
+                score++;
+                "Amazingly, the mechanism still works. It casts a 
+                huge, powerful beam across the sea. As it does so, 
+                you think you saw a huge ship coming towards you, 
+                yet when the light comes round again, you see 
+                nothing.";
+            }
+        ],
+ has    static switchable container open;
+
+Object  lighthouseTimer
+ with   time_out [; print "^From below, you hear someone trying to 
+    open the lighthouse door."; ],
+        time_left;
+
+Object  lounge "Living quarters"
+ with   name 'furniture' 'dust',  ! this just means player can refer to them !
+        description
+            "This appears to be the living quarters of the 
+            lighthouse. Compact and cosy, it contains everything you 
+            would need to live here including a stove, comfortable 
+            furniture and a large rug. A cupboard takes up most of 
+            the far wall and a dining table stands close by. 
+            Everything is covered in dust, untouched for months or 
+            even years.",
+        u_to  top,
+	    d_to  bottom,
+ has    light;
+
+Object  -> stove "stove"
+ with   name 'stove' 'cooker' 'oven',
+        description "A stove used for preparing food. Looks like it 
+            might still work if you wanted to cook something in it.",
+        before [;
+         SwitchOn: if (self has open)
+         {
+             "You cannot turn the stove on while it's open!";
+         }
+         Open: if (self has on)
+         {
+             "You cannot open the stove while it is on!";
+         }
+        ],
+	    after [;
+         SwitchOn: if (cheese in self)
+         {
+             score++;
+             remove cheese;
+             move cupboard_key to self;
+             "As the oven heats up, a disgusting smell eminates from 
+             within, as the cheese melts and departs this world.";
+         }
+        ],
+ has    scenery static switchable container openable;
+
+Object  -> table "dining table"
+ with   name 'dining' 'table',
+        description "A large dining table, its centrepiece being a 
+            rather fetching fruit bowl.",
+        after [;
+  	     Examine, Search: 
+            !give bowl ~concealed;
+            <Search bowl>;
+	    ],
+ has    supporter static scenery;
+
+Object  -> bowl "bowl"
+ with   name 'bowl',
+        description "A bowl, which seems to have been here for some 
+            years.",
+        before [;
+         Take: "The bowl is rather large and would be cumbersome.";
+        ],
+ has    static concealed container transparent open concealed;
+
+Object  -> -> fruit "dried piece of fruit"
+ with   name 'dried' 'piece' 'fruit',
+        description "You can just about make out that this rather 
+            dry, soft lump was indeed once a piece of fruit. It 
+            doesn't look particularly appetising now, though.",
+        after [;
+	     Drop: if (location==bottom) 
+         { 
+		     remove self;
+	      	 score++;
+		     move cheese to location;
+             move mouse to location;
+	         "A hungry mouse pops out and eats the fruit, leaving 
+             behind some rather old looking cheese.";
+         }
+	     Eat: deadflag=true;
+	        "The fruit tastes a little off, and is shortly followed 
+            by strange visions, and death.";
+	    ],
+
+ has    edible;
+
+Object  -> rug "rug"
+ with   name 'rug',
+        description "The rug occupies a large area of the floor and 
+            must've been quite decadent in its day.",
+        before [;
+         LookUnder: 
+            if (glove in rug)
+            {
+                move glove to lounge;
+                "You find an old glove.";
+            }
+          Pull,Push:
+            "The rug is pretty heavy, but you could probably look under it.";
+        ],
+ has    scenery;
+
+Object  ->-> glove "old glove"
+ with   name 'glove',
+        description "One shabby old glove, its matching one has long 
+            since departed.",
+        after [;
+         Drop: if (cupboard_key in player)
+         {
+             move cupboard_key to real_location;
+             "Dropping the glove, the key becomes too hot to hold 
+             and you immediately let go.";
+         }
+        ],
+ has    clothing;
+
+Object  -> cupboard "large cupboard"
+ with   name 'large' 'cupboard',
+        with_key cupboard_key,
+ has    static container openable scenery lockable locked;
+
+Object  ->-> cog "small cog"
+ with   name 'small' 'cog',
+        before [;
+         Take: if (self in lighthouse_lamp)
+         {
+             "The cog fits rather snugly and you cannot remove it 
+             now.";
+         }
+        ],
+        description "A cog used for starting the main light.";
+
+Object  bottom "Lighthouse bottom"
+ with   description [;
+            if (lighthouse_portal in self)
+            {
+                "Bottom of the lighthouse, with a large iron door 
+                leading outside, and the mouse hole opposite. The 
+                room has taken on a serene light from the portal.";
+            }
+            else
+            {
+                "Bottom of the lighthouse, with a large iron door 
+                leading outside. There is nothing else of note, other 
+                than a small mouse hole opposite the door.";
+            }
+        ],
+        e_to iron_door,
+        out_to iron_door,
+        u_to lounge,
+        before [;
+         Close: "The iron door is too heavy to move.";
+        ],
+        visitorFlag 0,
+ has    light;
+
+Object  -> iron_door "iron door"
+ with   name 'iron' 'door',
+        description [; 
+            print "This huge iron door keeps the sea out";
+            if (self has locked)
+            {
+                ", and currently locks you in.";
+            }
+            else
+            {
+                ".";
+            }
+        ],
+        door_to outside,
+        door_dir e_to,
+ has    static scenery door openable lockable locked;
+
+Object  -> mouse_hole "mouse hole"
+ with   parse_name [j;
+            j = NextWord();
+            if (j=='mousehole' || j=='hole')
+            {
+                return 1;
+            }
+            else if (j=='mouse' && NextWord()=='hole')
+            {
+                return 2;
+            }
+            return 0;
+        ],
+        before [;
+            Search: <<Examine self>>;
+        ],
+        description
+            "Bending down to examine the mouse hole doesn't tell you 
+            much, other than the mouse hole is dark, and your back 
+            is playing up.",
+ has    static scenery;
+
+! This is enabled once we have visited the wizard.
+
+Object  lighthouse_portal "glowing portal",
+ with   name 'glowing' 'portal',
+        description "A glowing portal generated by the old man.",
+        after [;
+         Enter:
+            print "A blinding flash of light and you materialise
+                elsewhere..^";
+            PlayerTo(wizard_shop);
+            rtrue;
+        ],
+ has    enterable static;
+
+Object  outside "Outside the lighthouse"
+ with   name 'monster' 'mist' 'horizon' 'beam',
+        description [;
+            if (self hasnt visited)
+            {
+                print "Standing outside the lighthouse, there is no 
+                    sign of the man you saw earlier. Dawn has 
+                    broken, bringing an end to the storm, and a 
+                    thick mist hangs around the rocky coastline. ";
+            }
+            else
+            {
+                print "The coastline outside the lighthouse is 
+                    particularly rocky, and a thick mist permeates 
+                    the air here. ";
+            }
+            "A barren horizon stands before you. West leads into the 
+            lighthouse, south to a village green, and east leads to 
+            the village pub.";
+        ],
+        w_to bottom,
+        e_to pub,
+        s_to village_green,
+        before [;
+         Swim: "It looks far too cold.";
+        ],
+        each_turn [old_dir new_dir;
+            self.counter--;
+            if (self.counter==0)
+            {
+                old_dir = weather_vane.wind_direction;
+                new_dir = random(NORTH_STRING, SOUTH_STRING,
+                                 EAST_STRING, WEST_STRING);
+                if (new_dir ~= weather_vane.wind_direction)
+                {
+                    weather_vane.wind_direction = new_dir;
+                    print "^With a sudden gust, the wind changes 
+                        direction to the ",
+                        (string)weather_vane.wind_direction, ".";
+
+                    if (weather_vane.wind_direction==EAST_STRING)
+                    {
+                        print " For a brief moment you think you saw a
+                            ship in trouble on the horizon.";
+                    }
+                }
+                self.counter = 2+random(3);
+            }
+        ],
+ private counter 3,
+ has    light;
+
+Object -> lighthouse "lighthouse"
+ with   name 'lighthouse',
+        description "From outside, the lighthouse seems huge and 
+            somehow comforting.",
+        before [;
+         Enter: <<Go w_obj>>;
+        ],
+ has    static scenery;
+
+! There is a slot in the shaft for 3 rings... spelling out MYSTICAL MARINER
+
+Object  -> stone_pillar "stone pillar",
+ with   name 'stone' 'pillar' 'obelisk',
+        description "Although dwarfed by the lighthouse, this 
+            obelisk stands pretty tall and provides an attractive 
+            coastline monument. More usefully, it lets people know 
+            how far away the pub is. Situated right at the top of 
+            the pillar is a weather vane.",
+has static;
+
+! Object  -> yellow_slot "yellow slot",
+!  with   name 'yellow' 'slot',
+!         description "A yellow slot.",
+! has scenery;
+
+! Object  -> gold_slot "gold slot",
+!  with   name 'gold' 'slot',
+!         description "A gold slot.",
+!  has    scenery;
+
+! Object  -> black_slot "black slot",
+!  with   name 'black' 'slot',
+!         description "A black slot.",
+!  has    scenery;
+
+Object  -> weather_vane "weather vane",
+ with   name 'weather' 'vane' 'eagle',
+        wind_direction NORTH_STRING,
+        ! Based on every N turns, change direction.
+        ! Pick random N,S,E,W  .. west of course is lighthouse.  When west, ship in distance.
+        description [;
+            print "The weather vane is a magnificent black eagle, 
+                with gold and silver wings. Underneath it are the 
+                compass directions, indicating the direction of the 
+                wind. It is currently pointing ", (string)self.wind_direction, ".";
+        ],
+        after [; ! Search,Examine: If pointing at lighthouse, ship in distance, at this point the dispel must be cast.
+        ],
+        before [;
+            Take: "It is far out of reach";
+        ],
+ has scenery;
+
+!                            P A R T   O N E
+! LIGHTHOUSE
+! LIGHTHOUSE
+! LIGHTHOUSE -> WEATHER  -> PUB     || WELL*   -> ROCKS AND CAVE   (In cave secret opening to boat)
+!                COCK^                                             (How to open? Logic puzzle here)
+!     -         GREEN    -> GREEN   -> GREEN   -> GREEN AND FENCE
+! BUS STOP+  -> GREEN    -> POND    -> WATER   -> FIELD            (Scarecrow here, to be burnt)
+!     -      -> WATER    -> ISLAND1 -> ISLAND2 
+!                           ISLAND3 -> ISLAND4    (The summoning of the player has taken place here)
+!                                                 (So we get a good deal more backstory..)
+
+! Cave opened with light spell.
+! What about using spells I'd planned for the BBC 'Mars' game?  Deja vu, mind rot, light
+!      freeze time etc.
+
+! These can tie in with a wizard being hired to sort out the ghost ship's deathly grasp on the village.
+
+! Finally, when the weather vane summons the ship, the player will have learned 'dispel' and can cast
+! this to get rid of the ship once and for all.  THE ONLY PROBLEM WITH DISPEL IS THAT IT MUST'VE BEEN
+! CAST BY ONE OF THE UNDEAD IN ORDER TO WORK.  THIS IS WHY THE WIZARD HAS SUMMONED THE PLAYER INTO LIFE.
+
+! Pub name ideas: The motley brew, 3 sheets to wind, the jolly roger.
+
+! * contains coin for bus, but you need MAGNET to attach to rope to pick it up (there's no bucket)
+
+! + Bus can be caught to next village, which tells you even more about the veil of darkness hanging
+! over the village.
+
+! ^ Signifies something happening..?
+
+! At the end, you start to see life picking back up in the village; children
+! play, the place seems brighter, and the picture in the pub has their expressions content?
+! As you raise a glass to celebrate, you notice the expressions on the crew in the picture seem more serene and less tortured...
+! THE END.
+
+! Need a comical name for the pub, "on the rocks" ?
+! If wearing glove, barman gives you a funny look and says 'we get all sorts here...'
+! Perhaps a clock on the wall,and a painting of a ship's disaster.
+
+
+! Beer garden "commanding spectacular views of the coastline"
+
+Object  pub "Village pub"
+ with   name 'wall' 'walls' 'chair' 'chairs' 'table' 'tables' 'glasses',
+        description "The village pub, ~Three Sheets To The Wind~, 
+            seems awfully quiet. Empty tables and chairs are 
+            scattered around. There is a ship's bell clock on the 
+            wall, and a painting of a ship in distress on the other 
+            wall. North leads into the beer garden.",
+        w_to outside,
+        n_to beer_garden,
+ has    light;
+
+Object  -> barman "barman"
+ with   name 'barman' 'bartender' 'bartend' 'man' 'waiter',
+        description "A barman stands here, polishing glasses.",
+        life [;
+         Answer: "The barman seems uninterested and continues 
+            polishing his glasses.";
+	     Ask: switch (second)
+         {
+          'clock' : "The barman looks up at the clock. ~That thing's 
+             been here long before I have, no real idea where it 
+             came from.~";
+          'painting', 'picture' : "A sad expression fills the 
+             barman's face. ~I asked the previous owner myself about 
+             that picture. Haunting ain't it? Apparently a ship got 
+             into some kind of trouble not far from here. Turned out 
+             it went down with all hands on deck. All rather 
+             depressing really.~";
+          'lighthouse' : "The barman looks towards the door. ~The 
+             old lighthouse? It's not been used for years as far as 
+             I know.~";
+          'ship' : "The barman begins to talk about the ship, but as his eyes meet yours while telling of its demise, he seems to freeze momentarily, and quickly changes the subject.";
+          'glass' : "The barman gives you a funny look. ~Er, people 
+             usually drink from them.~";
+         }
+        ],
+ has    animate;
+
+Object  -> bar_clock "clock"
+ with   name 'clock',
+        description "A beautiful wall-mounted ship's clock. It is 
+            golden with a glass panel protecting its rather 
+            elaborate face. Although it doesn't appear to be working 
+            and is stuck at 2 in the afternoon.",
+ has    static scenery;
+
+Object  -> bar_picture "Picture"
+ with   name 'painting' 'picture',
+        description "The painting depicts the fishing ship 'Calypso' 
+            clearly in trouble during a storm at sea. As you look at 
+            the painting, an incredible range of emotions come over 
+            you, and your eyes move to the crew struggling. You 
+            instantly feel a deep connection to them, almost actual 
+            recognition of faces. The experience sends a shiver down 
+            your spine, and you find yourself having to look away, 
+            eventually staring at your own hands as you regain 
+            composure.",
+ has    static scenery;
+
+Object  -> bar_calypso "Calypso"
+ with   name 'calypso' 'ship',
+        description "The bar painting shows the fishing ship 
+            'Calypso' and her crew during a storm. The more you 
+            stare at it, the more your feelings intensify, and you 
+            have to look away.",
+ has    static scenery;
+
+Object  village_green "Village Green"
+ with   name 'grass',
+        description "This is the traditional village green, with a 
+            huge expanse of grass providing space for various 
+            get-togethers and activities. It's a little dry in 
+            places now though, and doesn't look like it's been 
+            tended to for a while. North takes you up to the coast 
+            by the lighthouse, while the green continues east. Just 
+            to the west is a bus stop.",
+        n_to outside,
+        e_to village_green_east,
+        w_to bus_stop,
+ has    light;
+
+Object  village_green_east "Village Green East"
+ with   name 'grass',
+        description "You stand at the east end of the village green. 
+            The grass has become much dryer here, and hangs around 
+            your feet lifelessly. East takes you further toward the 
+            rocky coast, and south towards a boating lake.",
+        s_to boating_lake,
+        w_to village_green,
+        e_to rocks,
+ has    light;  
+
+Object  rocks "Rocks",
+ with   name 'rocks' 'field',
+        description "You arrive at a flat, rocky, patch of land. 
+            Rocks tower all around you, with the exception of a 
+            field to the south. It also looks like you might be able 
+            to enter a small cave in the rocks to the north.",
+        s_to field,
+        w_to village_green_east,
+        n_to cave,
+ has    light;
+
+Object  -> rocks_cave "cave",
+ with   name 'cave',
+        description "The cave opening is dark and small, but large 
+            enough to enter.",
+        after [;
+         Enter:
+            print "(By going north)";
+            PlayerTo(cave);
+            rtrue;
+        ],
+ has    enterable scenery;
+
+Object  field "Field",
+ with   name 'rocks' 'field' 'vegetation' 'land',
+        description "Once a plot of arable land, this field now 
+            seems fairly barren, with only a hint of vegetation 
+            sprouting up. Rocks prevent you from going any further, 
+            and north takes you back again.",
+        n_to rocks,
+ has    light;
+
+! Contains oar, need to burn it down to get it !
+
+Object  -> scarecrow "scarecrow"
+ with   name 'scarecrow' 'scare' 'crow',
+        description "The scarecrow seems pretty sturdy considering 
+            it only appears to be stuffed with dry straw.",
+        before [;
+         Burn:
+            "The scarecrow looks flammable. However, you have 
+            nothing to light it with.";
+         Attack:
+            "You attack the scarecrow but it seems very
+            sturdy. Something must be propping it up.";
+        ],
+        after [;
+         Examine, Search: 
+            if (rod has concealed)
+            {
+                give rod ~concealed;
+                "You notice the scarecrow is holding an old fishing 
+                rod.";
+            }
+        ],
+ has    static;
+
+Object -> straw "straw"
+ with   name 'straw',
+        description "The straw is being used to pad out the 
+            scarecrow's body. It's very dry.",
+ has    scenery;
+
+Object  -> rod "fishing rod"
+ with   name 'fishing' 'rod',
+        description "An old, but intact, fishing rod.",
+        caught_coin false,
+        before [;
+         Wave, Swing:
+            if (TestScope(well))
+            {
+                if (~~self.caught_coin)
+                {
+                    move coin to beer_garden;
+                    score++;
+                    self.caught_coin=true;
+                    "You fish out a silver coin from the well, and it 
+                    lands with a metallic clink on the floor!";
+                }
+                else
+                {
+                    "You don't catch anything.";
+                }
+            }
+            else
+            {
+                "The rod somehow feels natural in your hands.";
+            }
+        ],
+ has    concealed;
+
+Object  oar "oar",
+ with   name 'oar',
+        description "An old oar, once used to stabilise the scarecrow.";
+
+Object  boating_lake "Boating lake"
+ with   description "The boating lake takes pride of place in the 
+            village green. An old decorative boat bobs about in the 
+            water, and further out in the lake you can see some 
+            ducks. North takes you further up the green.",
+        monster_present true,
+        n_to village_green_east,
+        s_to [;
+            if (player in boat && oar in player)
+            {
+                if (self.monster_present==true)
+                {
+                    deadflag=true;
+                    "As you paddle out, a huge beast emerges from 
+                    the lake, attacking your boat, and, as a result, 
+                    you. If you didn't know better, you'd swear it 
+                    was some sort of Plesiosaurus. In any case, no 
+                    time for that now, as the world fades away..";
+                }
+                else
+                {
+                    print "Using the oar, you manage to paddle 
+                        across the water.";
+                    return(island_tip);
+                }
+            }
+            else
+            {
+                "You would need to paddle in the boat.";
+            }
+        ],
+        before [;
+         Swim: "It looks too cold and strangely dark. You decide 
+            against it.";
+         Take:
+            if (noun==ducks)
+            {
+                "The ducks bob about, and seem a little hungry!";
+            }
+         Drop,ThrowAt: if (noun==breadcrumbs)
+         {
+             print "The ducks move toward the bread, and as they do 
+                 so, a huge beast emerges from the lake, gobbling 
+                 them up in one bite. If you didn't know better, 
+                 you'd swear it was some sort of Plesiosaurus. In 
+                 any case, it disappears under the surface again, 
+                 satisfied.";
+             ! remove crumbs, ducks and monster
+             remove breadcrumbs;
+             remove ducks;
+             self.monster_present=false;
+             score++;
+             rtrue;
+         }
+        ],
+ has    light;
+
+Object -> lake "lake",
+ with   name 'lake' 'water',
+        description "The lake itself seems somehow darker than you 
+            would expect of a boating lake, and eerily still.",
+        found_in boating_lake island_tip island_one island_two island_three,
+ has    static scenery;
+
+Object  -> ducks "ducks", ! These fellas get eaten when bread thrown
+ with   name 'duck' 'ducks',
+        description "The ducks calmly paddle about in the distance.",
+        life [;
+         Give,Show,ThrowAt:
+            if (noun==breadcrumbs)
+            {
+                ! remove crumbs, ducks and monster
+                remove breadcrumbs;
+                remove ducks;
+                boating_lake.monster_present=false;
+                score++;
+                "The ducks move toward the bread, and as they do 
+                so, a huge beast emerges from the lake, gobbling 
+                them up in one bite. If you didn't know better, 
+                you'd swear it was some sort of Plesiosaurus. In 
+                any case, it disappears under the surface again, 
+                satisfied.";
+            }
+        ],
+ has    static pluralname scenery animate;
+
+Object  -> boat "decorative boat"
+ with   name 'boat',
+        description "Presumably once used for idle tours around the 
+            lake, this boat now looks a little worse for wear, 
+            although it remains afloat, and with a decent paddle 
+            could probably be used to get across the lake.",
+        after [;
+         Enter:
+            print "You step cautiously into the boat.";
+            
+            if (boating_lake.monster_present)
+            {
+                " As you do so, you notice a peculiar ripple out in 
+                the lake.";
+            }
+            
+            rtrue;
+        ],
+        before [;
+         Go:
+            if (noun==s_obj && real_location==boating_lake)
+            {
+                return 1;
+            }
+            else if (noun==n_obj && real_location==island_tip)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        ],
+ has    static enterable container open;
+
+Object  bus "bus"
+ private counter 0,
+ with   name 'bus',
+        invent[;
+            print "a bus";
+            return true;
+        ],
+        description "The bus barely looks capable of moving, and 
+            judging by the smoke coming out the back, this may well 
+            be its last journey.",
+        inside_description "Standing on the bus, you can see clearly 
+            the inside is just as bad the outside, with the added 
+            extra of a driver who seems just as happy to be on it as 
+            you are. Gets you from A to B though, as they say.",
+        before [;
+         Enter:
+            give self open;
+         Exit,GetOff:
+            give self open;
+        ],
+        after [;
+         Enter:
+            give self ~open;
+            self.counter=0;
+            "As you step onto the bus, the driver briefly glares at 
+            you with suspicion, before very quickly avoiding eye 
+            contact.^^~Fares, please~, he annouces.";
+         Exit,GetOff:
+            give self ~open;
+        ],
+        each_turn [;
+            if (self has player)
+            {
+                self.counter++;
+                if (self.counter>3)
+                {
+                    print "After becoming tired of waiting, the driver 
+                        asks you to leave, before driving off.^";
+                    self.counter=0;
+                    keep_silent=true;
+                    <Exit self>;
+                    keep_silent=false;
+                    remove self;
+                    bus_stop.bus_present=false;
+                    bus_stop.counter=0;
+                }
+            }
+        ],
+ has    light supporter container enterable static;
+
+Object  -> bus_driver "Bus driver"
+ with   description "The bus driver sits in his place firmly, 
+            seeming eager to get on with the journey.",
+        parse_name [j;
+            j=NextWord();
+            if (j=='driver')
+            {
+                return 1;
+            }
+            else if (j=='bus' && NextWord()=='driver')
+            {
+                return 2;
+            }
+            return 0;
+        ],
+        life [;
+         Give: if (noun==coin)! ofclass Coin)
+         {
+             ! Coin.destroy(noun);
+             remove coin;
+             score++;
+             print "The driver considers the coin briefly, before 
+                 announcing it's enough to take you to the next 
+                 village. In typical bus driver fashion, he then 
+                 floors the accelerator before you have sat down. 
+                 Before you know it, he's got you to a small town 
+                 and ushers you quickly off..^";
+             remove bus;
+             PlayerTo(town_top);
+             rtrue;
+         }
+            "The bus driver grumbles.";
+        ],
+ has    animate static scenery;
+
+Object  bus_stop "Bus stop"
+ with   name 'bus' 'stop',
+        description "The village bus stop stands here looking rather
+            battered, but functional (since its only function is to stay
+            upright, it's doing pretty well).  On the bus stop is a timetable.",
+         counter 0, bus_present false,
+        e_to village_green,
+        each_turn [;
+            self.counter = self.counter+1;
+            if (self.counter==4) ! every 4 turns show up
+            {
+                move bus to real_location;
+                self.bus_present=true;
+                "A bus arrives.";
+            }
+            else if (self.bus_present && (~~(player in bus)))
+            {
+                remove bus;
+                self.bus_present=false;
+                self.counter=0; ! make sure it's another 5 turns
+                "The bus leaves, the driver looking slightly miffed 
+                having stopped.";
+            }
+        ],
+ has    light;
+
+Object  -> time_table "Bus timetable"
+ with   name 'timetable' 'time' 'table',
+ with   description "A simple bus timetable, mostly eaten away by 
+            the weather, but you can determine that buses are 
+            scheduled to arrive frequently."
+ has    legible static scenery;
+
+Object  beer_garden "Beer garden"
+ with   name 'flowers' 'hedge',
+ with   description "A small beer garden, but commanding spectacular 
+            views of the sea. A tatty wooden table stands in the 
+            centre of the garden. In the far corner there is a small 
+            wishing well.",
+        s_to pub,
+ has    light;
+
+Object -> beer_garden_garden "garden"
+ with   name 'garden',
+        description "The garden is small and tidy, with colourful 
+            flowers and a hedge creating an attractive border 
+            between the beer garden and the sea.",
+ has    scenery;
+
+Object  -> well "well"
+ with   name 'wishing' 'well' 'roof' 'fisherman',
+        description "This small decorative wishing well takes pride 
+            of place in the left side of the beer garden. Attractive 
+            brickwork makes up the well shaft, and on the top is a 
+            small roof upon which is engraved a fisherman.",
+        before [;
+         Search:
+            if (~rod.caught_coin)   !Coin.remaining()>0)
+            {
+                move coin to self;
+                
+                "You can see a silver coin glinting at the bottom of 
+                the well, presumably thrown by a desperate customer 
+                hoping their hopes and dreams would be fulfilled by 
+                throwing money in a hole.";
+            }
+            else
+            {
+                "The well is dark and appears to be empty.";
+            }
+         Enter:
+            "The well is too small for you to fit into";
+         Empty,EmptyT:
+            "Not really possible.";
+        ],
+        after [;
+         Receive:
+            remove noun;
+            "It disappears from view and you get the feeling 
+            that wasn't a good idea.";
+        ],
+ has    container static scenery open;
+
+Object  -> garden_table "table"
+ with   name 'table',
+        description "The table is large and battered, no doubt from 
+            years of being kept outside in the sea air.",
+ has    static scenery supporter;
+
+Object -> -> beer_glass "beer glass"
+ with   name 'beer' 'glass',
+        description "Judging by the marks on the glass, it recently 
+            contained a frothy beer.",
+        before [;
+         Receive:
+            if (self in player)
+            {
+                if (noun==rod || noun==spade)
+                {
+                    "That won't fit!"; ! TODO: Add other rules
+                }
+            }
+            else
+            {
+                "You must be carrying the glass!";
+            }
+        ],
+ has    container open;
+
+Object  coin "silver coin",
+ with   name 'silver' 'coin' 'money',
+        before [;
+         Take: if (self in well)
+         {
+             "You cannot reach it!";
+         }
+        ],
+        description "A silver coin.";
+
+
+Object  sea "sea",
+ with   name 'sea',
+        found_in top beer_garden outside,
+        description "The sea seems bleak and cold, yet somehow you 
+            feel drawn towards it.",
+ has    static scenery;
+
+! Other parts
+
+Include ">Town.inf";
+Include ">Island.inf";
+Include ">Cave.inf";
+
+! MAIN GAME ROUTINES
+
+[GamePreRoutine;
+    if (action==##Answer && noun=='sammy' && actor==second)
+    {
+        if (silver_ring in player && silver_ring has worn)
+        {
+            print "Small sparks are emitted from the ring briefly.^";
+            
+            if (location==field && scarecrow in location)
+            {
+                remove straw;
+                move oar to location;
+                remove scarecrow;
+                score++;
+
+                print "One of the sparks from the ring catches some 
+                    of the dry straw on the scarecrow, immediately 
+                    igniting it. Very quickly it burns away to 
+                    nothing, leaving a rigid oar which once 
+                    propped up the scarecrow.";
+            }
+            
+            rtrue;
+        }
+        else
+        {
+            rfalse;
+        }
+    }
+    else if (action==##Answer && noun=='liner' && actor==second)
+    {
+        if (gold_ring in player && gold_ring has worn)
+        {
+            print "A burst of light comes from the ring.^";
+        
+            if (real_location==cave && cave hasnt light)
+            {
+                score++;
+                give cave light;
+                print "Magical light fills the room and you begin to 
+                    make out your surroundings...";
+            }
+
+            rtrue;
+        }
+    }
+    else if (action==##Answer && noun=='citra' && actor==second)
+    {
+        if (obsidian_ring in player && obsidian_ring has worn)
+        {
+            if (gold_ring in player && gold_ring has worn &&
+                silver_ring in player && silver_ring has worn)
+            {
+                if (real_location==outside)
+                {
+                    if (weather_vane.wind_direction==EAST_STRING)
+                    {
+                        ! Won
+                        deadflag=2;
+                        
+                        print "The rings begin to glow and fuse 
+                            together. A peculiar sensation comes 
+                            over you and you feel as though you are 
+                            becoming lighter and almost falling 
+                            asleep..^^Drifting in and out of this 
+                            sleep state, you realise you are 
+                            floating up, and as you do so, the rings 
+                            slip off your fingers, totally fused 
+                            now.^^You notice the letters on the 
+                            rings have re-arranged into 'MYSTICAL 
+                            MARINER' which become a permanent 
+                            fixture on the weather vane.^^High in 
+                            the sky now, drifting towards your ship, 
+                            time appears to have no meaning. You 
+                            take one last look at the village and 
+                            notice it seems somehow livelier; 
+                            greener grass, a brighter lake and even 
+                            that bus driver seems happy, truly 
+                            strong magic is at work.^^Your last 
+                            feeling is of utter peace and belonging.";
+                    }
+                    else
+                    {
+                        print "The obsidian ring glows fiercely.";
+                    }                        
+                }
+                else
+                {
+                    print "The obsidian rings glows slightly but
+                        somehow this place doesn't feel right.";
+                }
+            }
+            else
+            {
+                print "The obsidian ring glows slightly but seems
+                    incomplete without the other rings.";
+            }
+            
+            rtrue;
+        }
+    }
+    
+    ! always allow of course
+    rfalse;
+];
+
+! We use this to make sure 'say <spellname>' looks correct
+[BeforeParsing v i j;
+    v = NextWord();
+    if (v=='say' && num_words==2 )
+    {
+        v = NextWord();
+
+        ! MYSTICAL MARINER
+        ! ooo...o. o......
+
+        ! = LINER
+        ! = CITRA
+        
+        if (v=='sammy')
+        {
+            i=10;
+            j=5;
+
+        }
+        else if (v=='liner') ! LINER, need to change this.
+        {
+            i=10;
+            j=5;
+
+        }
+        else if (v=='citra') ! CITRA
+        {
+            i=10;
+            j=5; 
+        }
+        else
+        {
+            ! Have a go at parsing it
+            rfalse;
+        }
+
+        ! Variables set up; work our magic
+        while(buffer->j == ' ')
+        {
+            i++;
+            j++;
+        }
+        
+        LTI_Insert(i, ' ');
+        LTI_Insert(i+1, 't');
+        LTI_Insert(i+2, 'o');
+        LTI_Insert(i+3, ' ');
+        LTI_Insert(i+4, 's');
+        LTI_Insert(i+5, 'e');
+        LTI_Insert(i+6, 'l');
+        LTI_Insert(i+7, 'f');
+        
+        @tokenise buffer parse;
+    }
+    else if (v=='unlock' && real_location==lounge) ! if nothing specified, and has key, use key
+    {
+        if (num_words==2 || num_words==3)
+        {
+            i = NextWord();
+            j = NextWord();
+        
+            if (TestScope(cupboard_key) && (i=='cupboard' || (i=='large' && j=='cupboard')))
+            {
+                i=0;
+                while (~~(buffer->i == 0))
+                {
+                    i++;
+                }
+                
+                LTI_Insert(i+0, ' ');
+                LTI_Insert(i+1, 'w');
+                LTI_Insert(i+2, 'i');
+                LTI_Insert(i+3, 't');
+                LTI_Insert(i+4, 'h');
+                LTI_Insert(i+5, ' ');
+                LTI_Insert(i+6, 'k');
+                LTI_Insert(i+7, 'e');
+                LTI_Insert(i+8, 'y');
+        
+                @tokenise buffer parse;
+            }
+        }
+    }
+    
+    ! Ignore
+    rfalse;
+];
+
+[ Initialise;
+    location = top;
+    !move rod to player;
+    !move oar to player;
+    !move breadcrumbs to player;
+    !move cog to player;
+    !move glove to player;
+    !give glove worn;
+    !move cupboard_key to player;
+    !move spade to player;
+    !move breadcrumbs to player;
+    !give iron_door ~locked;
+    !give iron_door open;
+    !move gold_figure to player;
+    !move mouse to player;
+    !move coin to player;
+    !move glove to player;
+    !move breadcrumbs to player;
+    !move oar to player;
+    !move obsidian_figure to player;
+    !move large_ring to player;
+    !move spade to player;
+    !move beer_glass to player;
+    !move silver_ring to player;
+    !move gold_ring to player;
+    !move obsidian_ring to player;
+    !move mouse to player;
+    !move c to player;
+    !print "Coins left ",Coin.remaining();
+    !Coin.destroy(c);
+    !print "Coins left ",Coin.remaining();
+    
+#Ifdef TARGET_GLULX;
+    gg_mapwin = glk_window_open(gg_mainwin,(winmethod_Above+winmethod_Fixed),420,wintype_Graphics,GG_MAPWIN_ROCK);
+    gg_davewin = glk_window_open(gg_mapwin,(winmethod_Left+winMethod_Fixed),620,wintype_Graphics,GG_DAVEWIN_ROCK);
+    glk_image_draw(gg_davewin, 2, 10, 10);
+#Endif;
+    
+    "^^Darkness. Quickly, this is followed by a burning white light 
+    accompanied by intense pain rocketing up and down your body. 
+    Your efforts to scream are initially silent, giving way after a 
+    few seconds to a piercing scream as the bright light fades...^^";
+];
+
+[ LookRoutine;
+    if ((location == bottom) && (bottom.visitorFlag==1)) 
+    { 
+        give iron_door ~locked; 
+        give iron_door open;
+        bottom.visitorFlag = 0;
+        "^There is frantic battering on the door outside, and as you 
+        reach the bottom of the steps, a man bursts in. He appears 
+        very pale, and his presence is unnerving. He appears to 
+        recognise you for a brief moment, before shouting 'No, it 
+        can't be...' and running out again, terrified.";
+    }
+    else if (location == island_three)
+    {
+        if (random(100) <= 3)
+        {
+            "^You feel like someone has walked over your grave.";
+        }
+    }
+];
+
+[ DeathMessage; print "You have lost"; ];
+
+! ============================================================================ !
+
+Include "Grammar";
+
+Verb 'hang'     * held 'on' noun    -> PutOn;
+Verb 'fish'     * -> Fish;
+Verb 'cast'     * -> Fish;
+Verb 'paddle'   * 'boat' -> Paddle;
+Verb 'row'      * 'boat' -> Paddle;
+
+Extend 'read' first * legible -> Read;
+Extend 'get' first * noun 'with' 'rod' -> GetItemWithRod;
+Extend 'take' first * noun 'with' 'rod' -> GetItemWithRod;
+Extend 'feed' first * 'ducks' 'with' 'crumbs' -> FeedDucks;
+Extend 'feed' first * 'ducks' 'with' 'breadcrumbs' -> FeedDucks;
+Extend 'feed' first * 'ducks' -> FeedDucks;
+
+! Feedin the ducks
+[ FeedDucksSub;
+    if (real_location==boating_lake && boating_lake.monster_present==true)
+    {
+        if (breadcrumbs in player)
+        {
+            <<Drop breadcrumbs>>;
+        }
+
+        "You don't have anything suitable to feed them with.";
+    }
+    else
+    {
+        "You can't see any ducks here.";
+    }
+];
+
+! Reading stuff
+[ ReadSub; <<Examine noun>>; ];
+
+! Getting with rod
+[ GetItemWithRodSub; 
+    if (rod in player)
+    {
+        if (noun==coin)
+        {
+            <<Wave rod>>;
+        }
+        else
+        {
+            "The rod is useless for that.";
+        }
+    }
+    "You don't have any rod!";
+];
+
+! Used to fish with rod
+[ FishSub;
+    if (rod in player)
+    {
+        <<Wave Rod>>;
+    }
+    else
+    {
+        "You would need a fishing rod!";
+    }
+];
+
+! Used to cross water
+[ PaddleSub;
+    if (player in boat)
+    {
+        if (real_location==boating_lake)
+        {
+            <<Go s_obj>>;            
+        }
+        else if (real_location==island_tip)
+        {
+            <<Go n_obj>>;
+        }
+    }
+    else
+    {
+        "You need to be in a boat!";
+    }
+];
+
+! ============================================================================ !

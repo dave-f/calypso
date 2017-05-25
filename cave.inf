@@ -1,0 +1,298 @@
+! Calypso part 4 : Cave : Contains ship treasure.
+
+Constant BUTTONS_GROUP = "stone buttons with animal pictures on";
+
+Object cave "Cave",
+ with   name 'cave',
+        door_opened false,
+        description [;
+            if (self.door_opened)
+            {
+                "Lit up by your magical light, you notice the cave 
+                is rather larger than it looked from the outside. It 
+                is a relatively huge open space, even more so now 
+                that the stone slab has moved, enabling passage to a 
+                small chamber to the north.";
+            }
+            else
+            {
+                "Lit up by your magical light, you notice the 
+                cave is rather larger than it looked from the outside. 
+                It is a relatively huge open space, and the far wall is 
+                taken up by a huge stone slab, at the side of which are 
+                five buttons set into the wall.";
+            }
+            ],
+        n_to [;
+            if (self.door_opened)
+            {
+                return cave_inner;
+            }
+            else
+            {
+                "The cave panel blocks your way.";
+            }
+        ],
+        s_to rocks,
+        out_to rocks;
+
+Object  -> slab "slab",
+ with   name 'slab',
+        description "The huge slab stands at the northern end of the 
+            cave and seems to block entrance to an inner room. By 
+            the side of it are 5 buttons.",
+ has    scenery;
+
+[ CheckCaveButtons;
+    if (button_pelican has on && button_toucan has on &&
+        button_lion hasnt on && button_zebra has on &&
+        button_penguin hasnt on)
+    {
+        if (cave.door_opened==false)
+        {
+            score++;
+            cave.door_opened = true;
+            print "As you press this button, the huge stone slab 
+                moves to the right slowly, revealing an inner 
+                chamber to the north.";
+            rtrue;
+        }
+    }            
+    
+    rfalse;
+];
+
+Object  -> button_lion   "lion button",
+ with   name 'lion' 'button' 'buttons//p',
+        plural 'buttons',
+        description "A picture of a lion is carved into this button.",
+        list_together BUTTONS_GROUP,
+        after [;
+         SwitchOn,SwitchOff: return CheckCaveButtons();
+         ],
+         before [;
+         Push:
+            if (self has on)
+            {
+                give self ~on;
+            }
+            else
+            {
+                give self on;
+            }
+            if (~~CheckCaveButtons())
+            {
+                if (self has on)
+                {
+                    print "You switch the lion button on.^";
+                }
+                else
+                {
+                    print "You switch the lion button off.^";
+                }
+            }
+            rtrue;
+        ],
+ has    switchable static on;
+
+Object  -> button_zebra  "zebra button",
+ with   name 'zebra' 'button' 'buttons//p',
+        plural 'buttons',
+        description "A picture of a zebra is carved into this button.",
+        list_together BUTTONS_GROUP,
+        after [;
+         SwitchOn,SwitchOff: return CheckCaveButtons();
+        ],
+         before [;
+         Push:
+            if (self has on)
+            {
+                give self ~on;
+            }
+            else
+            {
+                give self on;
+            }
+            if (~~CheckCaveButtons())
+            {
+                if (self has on)
+                {
+                    print "You switch the zebra button on.^";
+                }
+                else
+                {
+                    print "You switch the zebra button off.^";
+                }
+            }
+            rtrue;
+        ],
+ has    switchable static;
+
+Object  -> button_penguin  "penguin button",
+ with   name 'penguin' 'button' 'buttons//p',
+        plural 'buttons',
+        description "A picture of a penguin is carved into this button.",
+        list_together BUTTONS_GROUP,
+        after [;
+         SwitchOn,SwitchOff: return CheckCaveButtons();
+        ],
+         before [;
+         Push:
+            if (self has on)
+            {
+                give self ~on;
+            }
+            else
+            {
+                give self on;
+            }
+            if (~~CheckCaveButtons())
+            {
+                if (self has on)
+                {
+                    print "You switch the penguin button on.^";
+                }
+                else
+                {
+                    print "You switch the penguin button off.^";
+                }
+            }
+            rtrue;
+        ],
+ has    switchable static on;
+
+Object  -> button_toucan  "toucan button",
+ with   name 'toucan' 'button' 'buttons//p',
+        plural 'buttons',
+        description "A picture of a toucan is carved into this button.",
+        list_together BUTTONS_GROUP,
+        after [;
+         SwitchOn,SwitchOff: return CheckCaveButtons();
+        ],
+         before [;
+         Push:
+            if (self has on)
+            {
+                give self ~on;
+            }
+            else
+            {
+                give self on;
+            }
+            if (~~CheckCaveButtons())
+            {
+                if (self has on)
+                {
+                    print "You switch the toucan button on.^";
+                }
+                else
+                {
+                    print "You switch the toucan button off.^";
+                }
+            }
+            rtrue;
+        ],
+ has    switchable static on;
+
+Object  -> button_pelican "pelican button",
+ with   name 'pelican' 'button' 'buttons//p',
+        plural 'buttons',
+        description "A picture of a pelican is carved into this button.",
+        list_together BUTTONS_GROUP,
+        after [;
+         SwitchOn,SwitchOff: return CheckCaveButtons();
+        ],
+         before [;
+         Push:
+            if (self has on)
+            {
+                give self ~on;
+            }
+            else
+            {
+                give self on;
+            }
+            if (~~CheckCaveButtons())
+            {
+                if (self has on)
+                {
+                    print "You switch the pelican button on.^";
+                }
+                else
+                {
+                    print "You switch the pelican button off.^";
+                }
+            }
+            rtrue;
+        ],
+ has    switchable static;
+
+ ! I think you should have to examine earth to see footprints, give
+ ! them ~concealed rather than the disturbed earth.. or rather, give
+ ! both of them it together.
+
+Object  cave_inner "Inner cave",
+ with   name 'stone' 'cave',
+        description "Deeper inside the cave is this small 
+            circular room. Although the light fades somewhat in here 
+            you can still make out you are in a cramped room 
+            with stone walls and moist earth.",
+        s_to cave,
+ has    light;
+
+Object  -> cave_walls "walls",
+ with   name 'wall' 'walls',
+        description "The walls are stone and cold.",
+ has    scenery pluralname;
+
+Object  -> cave_ground "moist earth",
+ with   name 'moist' 'earth' 'soil',
+        description "The earth is dark and damp.",
+        after [;
+         Examine, Search:
+            if (cave_footprints has concealed)
+            {
+                give cave_footprints ~concealed;
+                give cave_disturbed_earth ~concealed;
+                move cave_disturbed_earth to real_location;
+                "You spot some footprints in the ground leading to a disturbed patch of earth.";
+            }
+        ],
+ has    scenery;
+
+Object  -> cave_footprints "footprints",
+ with   name 'foot' 'prints' 'footprints',
+        description "The footprints look to be reasonably fresh, and 
+            lead to a disturbed patch of earth.",
+ has    scenery pluralname concealed;
+
+! Mulling the door closing, leaving player in dark? Have to get out.. Hmm.
+
+Object  cave_disturbed_earth "disturbed earth",
+ with   name 'disturbed' 'earth',
+        description "A small patch of recently disturbed earth.",
+        before [;
+         Dig:
+            if (second==spade)
+            {
+                if (spade.working)
+                {
+                    score++;
+                    move obsidian_figure to real_location;
+                    "You uncover an obsidian figure.";
+                }
+                else
+                {
+                    "The spade is broken and isn't much use.";
+                }
+            }
+            else
+            {
+                "You would need a tool.";
+            }
+        ],
+ has    concealed scenery;
+
+Object  obsidian_figure "obsidian figure",
+ with   name 'obsidian' 'figure' 'figurine',
+        description "A solid obsidian figure.";

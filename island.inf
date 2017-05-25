@@ -1,0 +1,151 @@
+! Calypso part 3 : Island
+!
+! +------------------------------------+
+! | Island tip      |    Island one    |
+! |  (landing point)|         (sand)   |
+! |                 |                  |
+! | Island two      |   Island three   |
+! |       (spade)   |   (plinth/doll)  | 
+! +------------------------------------+
+
+object  island_tip "Tip of the island",
+ with   name 'shore' 'shoreline' 'island',
+        description "This small island sits in the middle of the 
+            boating lake and is populated by many trees. South will 
+            take you further into the island, and east will take you 
+            along the small shoreline.",
+        n_to [;
+            if (player in boat && oar in player)
+            {
+                print "Using the oar, you manage to paddle across 
+                    the water.";
+                return(boating_lake);
+            }
+            else
+            {
+                "You would need to paddle in the boat.";
+            }
+        ],
+        e_to island_one,
+        s_to island_two,
+ has    light;
+
+object  island_one "Island",
+ with   name 'shore' 'shoreline',
+        description "The small island continues along the lake. 
+            Trees continue along the coast although are a little 
+            thinner here. West leads back along the island's shore, 
+            while south takes you to a clearing.",
+        w_to island_tip,
+        s_to island_three,
+ has    light;
+
+object  -> clearing "clearing",
+ with   name 'clearing',
+        description "Nearby the trees thin a little, creating what 
+            seems to be some sort of clearing.",
+        found_in island_one island_two,
+ has    scenery;
+
+object  -> sand "sand", ! Todo: wet property, set to true when mix
+ with   name 'sand',
+        wet false,
+        description "The sand is fine and dry."
+ has    pluralname;
+
+object trees "trees"
+ with   name 'trees',
+        description "The trees populate this attractive little 
+            island, making it a suitable centrepiece for the lake 
+            itself.",
+        found_in island_tip island_one island_two island_three,
+ has    scenery pluralname;
+
+object  island_two "Island",
+ with   description "The trees become quite densely populated here, 
+            giving the place a much darker feel. North takes you 
+            back to the island tip and east takes you further into 
+            the island trees.",
+        n_to island_tip,
+        e_to island_three,
+ has    light;
+
+Object  -> spade "spade"
+ with   name 'spade',
+        working false,
+        initial "A discarded garden spade lies here.", 
+        description [;
+            if (self.working) ! repaired by h/w shopkeep
+            {
+                "The spade looks as good as new, ready to take on 
+                any piece of earth that gets in its way.";
+            }
+            else
+            {
+                "The head of the spade is broken, which 
+                unfortunately precludes it from its job of actually 
+                digging anything.";
+            }
+        ];
+
+object  island_three "Island clearing",
+ with   name 'ship' 'moon' 'moss',
+        description "The far end of the island. Trees continue to 
+            populate the island, but give way to a small clearing 
+            here with a huge stone plinth in the middle.",
+        n_to island_one,
+        w_to island_two,
+ has    light;
+
+object  -> plinth "Plinth",
+ with   name 'plinth',
+        ! Maybe this has same monster/something carving as the
+        ! sun dial / weather vane.
+        description "The plinth is made of stone, with elaborate 
+            carvings running up the sides. Seemingly here a while, 
+            it is covered in patches of moss. Fixed on the top is a 
+            small raised stone block.",
+ has    scenery;
+
+object  -> plinth_block "block",
+ with   name 'block',
+        description "The stone block looks like it is made to slide 
+            down into the plinth itself.",
+        after [;
+         Receive:
+            if (noun==beer_glass)
+            {
+                if (sand in beer_glass)
+                {
+                    remove beer_glass;
+                    move gold_figure to location;
+                    score++;
+                    "With a satisfying click, the block slides down 
+                    into the plinth, and a small opening appears at 
+                    the bottom, out of which slides a small golden 
+                    figure, before the opening closes again.";
+                }
+                else
+                {
+                    "It doesn't quite seem heavy enough.";
+                }
+            }
+            else
+            {
+                "The block moves slightly, but it seems the wrong 
+                weight.";
+            }
+        ],
+ has    scenery supporter;
+
+object  -> carvings "carvings",
+ with   name 'carvings',
+        description "The carvings are covered in moss, but after 
+            careful study you can make out a ship and what seems to 
+            be a moon.",
+ has    pluralname scenery;
+
+object  gold_figure "golden figure",
+ with   name 'gold' 'golden' 'figure' 'figurine',
+        description "A solid gold figure. Upon closer examination, 
+            you notice the figure is not dissimilar to you.";

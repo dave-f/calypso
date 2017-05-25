@@ -1,0 +1,315 @@
+! Calypso : Part 2
+! This details the four shops in town after the bus.
+
+! Main entry location
+Object  town_top "Top of town",
+ with   name 'town' 'shops',
+        description "You are at the top end of the town's high 
+            street. The main road leads back north, while shops line 
+            the street either side to the south.",
+        s_to street_one,
+        n_to "The road stretches for what seems like miles and you 
+            decide against going that way.",
+ has    light;
+
+Object  street_one "High street",
+ with   name 'shops',
+        description "Several shops line the street here. To the east 
+            is a bakery, and to the west a small hardware store. 
+            North takes you back to the top of town, and the high 
+            street continues south.",
+        n_to town_top,
+        e_to baker_shop,
+        w_to hardware_shop,
+        s_to street_two,
+ has    light;
+
+Object  street_two "High street",
+ with   name 'fence' 'shops' 'window',
+        description "More shops attempt to flog their wares here, 
+            before the street comes to an abupt end by a fence to 
+            the south. There is a closed jewellery shop to the west, 
+            and a peculiar looking little shop lies east. North 
+            takes you back up the high street.",
+        n_to street_one,
+        e_to wizard_shop,
+        w_to "The shop is closed.",
+ has    light;
+
+Object  -> jewellery_shop "Jewellery shop",
+ with   name 'jewellers' 'jewellery',
+        description "The jewellery shop appears closed. In the 
+            window you can see a range of brooches, rings and 
+            various trinkets. To the far left, there is a small 
+            golden gong.",
+ has    scenery;
+
+Object  -> gong "a small gong",
+ with   name 'golden' 'gong',
+        description "A small mysterious golden gong.",
+        before [;
+         Take: "You cannot get at the gong!";
+        ],
+ has    scenery;
+
+Object -> jewels
+ with   name 'brooches' 'rings' 'trinkets',
+        description "The jewels sparkle in the window.",
+        before [;
+         Take: "You cannot get at the jewels!";
+        ],
+ has    scenery;
+
+Object  generic_shop_inside "shop",
+ with   name 'shop',
+        found_in baker_shop hardware_shop wizard_shop,
+        description [;
+            <<Look>>;
+        ],
+ has    scenery;
+
+Object  generic_shop_outside,
+with    name  'shop' 'shops//p',
+        found_in town_top street_one street_two,
+        description "The shops line the high street.",
+        before [;
+        Enter: "You'll have to head in the direction of a shop.";
+        ],
+has     scenery;
+
+! Shop 1 : Bakery.
+! PUZZLE : Breadcrumbs for the ducks on the boating lake.  The monster
+!          then eats them instead and goes away happy.  Get the crumbs
+!          by dropping the mouse and baker runs after it.
+
+Object  baker_shop "Bakery",
+ with   name 'smells' 'aromas',
+        description "The smells coming from this bakery fill your 
+            nostrils with sweet and comforting aromas. It is small 
+            but well-stocked, with freshly-baked loaves at the back 
+            of the shop, and a mouth-watering range of cakes and 
+            pastries on display behind the glass counter.",
+        w_to street_one,
+        after[;
+         Drop:if (noun==mouse)
+         {
+             remove mouse;
+             remove baker;
+             score++;
+             "The mouse instantly smells the delights of its 
+             surroundings, and runs round the back of the shop in 
+             search of more goodies. The baker looks horrified and 
+             immediately gives chase, screaming something about a 
+             food hygiene nightmare...";
+         }
+        ],
+ has    light;
+
+Object  -> baker "baker",
+ with   name 'baker',
+        description "The baker is jolly and rotund enough to suggest 
+            that he certainly takes a very practical interest in his 
+            products.",
+ has    animate;
+
+Object  -> bakery_counter "counter",
+ with   name 'counter',
+        crumbs_taken,
+        description [;
+            print "The glass bakery counter houses a bewildering 
+                array of bread, cakes, and pastries.";
+            if (~~ self.crumbs_taken)
+                "  The top of it is covered in dry breadcrumbs.";
+        ],
+        initial [;
+            self.crumbs_taken = false;
+        ],
+ has    scenery;
+
+Object  -> pastries,
+ with   name 'bread' 'loaf' 'loaves' 'cakes' 'pastries' 'pastry',
+        description "Everything looks delicious!",
+        before [;
+         Take:"All the food is out of reach!";
+        ],
+ has    scenery;
+
+Object  -> breadcrumbs "breadcrumbs",
+ with   name 'breadcrumbs' 'crumbs',
+        description "The breadcrumbs are dry and stale.",
+        before [;
+            if (real_location==baker_shop && baker in baker_shop)
+            {
+                "The baker slaps your hand. ~No free trials in my 
+                shop~, he announces.";
+            }
+        ],
+        after [;
+         Take: give self ~concealed; bakery_counter.crumbs_taken = true;
+        ],
+ has    concealed pluralname edible;
+
+! Shop 2 : Hardware (spade)
+! PUZZLE : GET SPADE REPAIRED
+
+Object  hardware_shop "Hardware shop",
+ with   name 'objects',
+        description "The hardware shop contains all manner of 
+            hardware paraphernalia, most of which you can't even 
+            fathom the use for. The shopkeeper, however, certainly 
+            looks like he's up to the job.",
+        e_to street_one,
+ has    light;
+
+Object  -> hardware_shopkeeper "shopkeeper",
+ with   name 'man' 'shopkeep' 'shopkeeper',
+        description "The hardware shopkeeper is dressed in a brown 
+            overall and has an unhealthy enthusiasm for all things 
+            hardware. He looks at you with fire in his eyes, 
+            obviously expecting you to share his passion.",
+        life [;
+         Answer: "The shopkeeper seems in a world of his own.";
+         Show, Give:
+            if (noun == spade)
+            {
+                if (spade.working)
+                {
+                    "The shopkeeper seems pleased with his repairs.";
+                }
+                else
+                {
+                    score++;
+                    spade.working=true;
+                    "The shopkeeper's eyes light up with passion; he 
+                    takes the spade off you, repairs it in a flash, and 
+                    returns it to you. He clearly digs his job.";
+                }
+            }
+        ],
+ has    animate;
+
+! Shop 3 : Wizard
+! "What did you expect, bloke in a cloak and a pointy hat?" he says
+! Wizard has portal to zap you back to main part.
+! PUZZLE : Give wizard all he requires in exchange for spells:
+!
+!          Spell 1. Sparks (Sammy) : Use on scarecrow.
+!                   Gives you it when you meet.
+
+!          Spell 2. Light (Liner) : Maybe citra/liner swap.
+!                   In exchange for something dug up on island.
+
+!          Spell 3. Dispel (Citra) (use on ship)
+!                   Ring round in cave.
+
+Object  wizard_shop "Shop of curios",
+ with   name 'objects' 'object' 'curios',
+ with   description
+        [;
+            print "Situated at the end of the road, this small, 
+                dark, shop is easy to miss. It contains an 
+                assortment of strange objects and is rather 
+                difficult to spot anything of any value at all. An 
+                old man stands in the corner of the shop.^";
+            if (self hasnt visited)
+            {
+                move silver_ring to player;
+                move lighthouse_portal to bottom;
+                print "^As you enter the shop, the old man stops 
+                    what he's doing and immediately rushes over to 
+                    greet you. ~So, here you are..~, he begins.^^~A 
+                    real reincarnation of one of the poor souls of 
+                    the 'Calypso' fishing ship which went down in 
+                    tragic circumstances nearby. Only by putting the 
+                    ship and its crew to rest can we rid the village 
+                    of the dark clouds hanging over us, sapping the 
+                    life out of the village.^^In order to do this I 
+                    need your help to bring me two magical 
+                    figurines. Deliver these, and we have all we 
+                    need for the final spellcast, which must be done 
+                    by one of the crew, and that's indeed why I 
+                    recalled you to this village.~^^~This might be 
+                    of some use~, he says, and hands you a ring. 
+                    ~Oh, when you're ready, I've created a magic 
+                    portal you can use to get back here. Good 
+                    luck!~^";
+            }
+            rfalse;
+        ],
+        w_to street_two,
+ has    light;
+
+Object  -> wizard "old man",
+ with   name 'old' 'man',
+        description "The old man stands in the corner of the room 
+            tidying a bookcase.",
+        life [;
+         Show,Give:
+            if (noun==gold_figure)
+            {
+                move gold_ring to player;
+                remove gold_figure;
+                score++;
+                print "The man looks elated. ~Excellent, our work 
+                    can continue~, he informs you. ~We do still 
+                    require the other figure if we are to see this 
+                    thing through, though.~^^After briefly examining 
+                    the golden figure, he hands you a gold ring, 
+                    ~You may also find this of some use. Good luck!~";
+                rtrue;
+            }
+            if (noun==obsidian_figure)
+            {
+                print "~Excellent, this figure will enable me to 
+                    craft the final magical ring required to put you 
+                    and your crew at rest.~^^He scurries away before 
+                    quickly returning with a ring he hands to 
+                    you.^^~It is you alone who must do the final 
+                    spell casting, good luck and may you rest in 
+                    peace!~";
+                score++;
+                remove obsidian_figure;
+                move obsidian_ring to player;
+                ! Make sure wind is not east.
+                weather_vane.wind_direction=NORTH_STRING;
+                rtrue;
+            }
+        ],
+ has    animate;
+
+Object  -> bookcase "bookcase",
+ with   name 'book' 'case' 'bookcase' 'books',
+        description "A dusty bookcase. Nothing of particular interest.",
+ has    scenery;
+
+Object  -> shop_portal "glowing portal",
+ with   name 'glowing' 'portal',
+        description "A glowing portal.",
+        after [;
+         Enter:
+            print "A blinding flash of light and you materialise
+                elsewhere..^";
+            PlayerTo(bottom);
+            rtrue;
+        ],
+ has    enterable static;
+
+! Instead of scrolls, what about something wearable, maybe a necklace
+! with 3 pieces.. or a ring with 3 pieces.  Yes, a ring.
+
+Object  silver_ring "silver ring",
+ with   name 'silver' 'ring',
+        description "A silver ring. On it is inscribed 'Sammy'.",
+ has    clothing;
+
+Object  gold_ring "gold ring",
+ with   name 'gold' 'golden' 'ring',
+        description "A ring. On it is inscribed 'Liner'.",
+ has    clothing;
+
+Object  obsidian_ring "obsidian ring",
+ with   name 'obsidian' 'ring',
+        description "A ring. On it is inscribed 'Citra'.",
+ has    clothing;
+
+
