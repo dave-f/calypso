@@ -15,7 +15,7 @@ Constant GG_DAVEWIN_ROCK 211;
 
 Include "Parser";
 Include "VerbLib";
-Include "./InfGlk.h";
+Include "infglk.h";
 
 Attribute legible;
 
@@ -998,9 +998,9 @@ Object  sea "sea",
 
 ! Other parts
 
-Include ">Town.inf";
-Include ">Island.inf";
-Include ">Cave.inf";
+Include ">town.inf";
+Include ">island.inf";
+Include ">cave.inf";
 
 ! MAIN GAME ROUTINES
 
