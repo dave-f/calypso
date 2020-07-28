@@ -127,7 +127,10 @@ Object  -> bakery_counter "counter",
  has    scenery;
 
 Object  -> pastries,
- with   name 'bread' 'loaf' 'loaves' 'cakes' 'pastries' 'pastry',
+        with   parse_name [ i;
+           while(NextWord() == 'bread' or 'loaf' or 'loaves' or 'cakes' or 'pastries' or 'pastry') i++;
+           return i;
+         ],
         description "Everything looks delicious!",
         before [;
          Take:"All the food is out of reach!";
@@ -135,7 +138,7 @@ Object  -> pastries,
  has    scenery;
 
 Object  -> breadcrumbs "breadcrumbs",
- with   name 'breadcrumbs' 'crumbs',
+        with   name 'breadcrumbs' 'crumbs',
         description "The breadcrumbs are dry and stale.",
         before [;
             if (real_location==baker_shop && baker in baker_shop)
