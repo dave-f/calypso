@@ -91,7 +91,6 @@ Abbreviate "before";
 Abbreviate "see";
 Abbreviate "ove";
 
-
 Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
 Constant Headline   "^A small text adventure from Papa's Gong.^";
 
@@ -102,24 +101,6 @@ Constant MANUAL_PRONOUNS;
 EndIf;
 
 Constant MAX_SCORE  15;
-
-! Abbrevs can save more memory, make with:
-! inform6 calypso.inf +lib -v3 -u > abbr.txt
-
-! Now open abbr.txt in a text editor. At the very end, you will find 64
-! lines beginning with "Abbreviate". Copy these lines and paste them at
-! the beginning of calypso.inf (or in a separate .inf file which you
-! include at the beginning of calypso.inf). This must be before you
-! define any strings or include globals.h. Also, you must define the
-! constant CUSTOM_ABBREVIATIONS before including globals.h.
-
-! Then, to use the abbreviations, add -e when compiling:
-! inform6 calypso.inf +lib -v3 -e
-! And include:
-! Include ">abbrev.inf";
-
-! Required for abbreviations
-! Constant CUSTOM_ABBREVIATIONS;
 
 ! Puny
 IfDef USE_PUNY;
