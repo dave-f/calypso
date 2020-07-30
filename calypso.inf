@@ -13,7 +13,7 @@
 ! Comment in USE_PUNY, or use -v3 to compile to z3
 ! ../inform6/i6 +../Punyinform/lib calypso.inf -v5es (or -v3es)
 
-! Constant USE_PUNY;
+Constant USE_PUNY;
 
 #IfV3;
 #IfnDef USE_PUNY;
