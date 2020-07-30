@@ -1045,7 +1045,7 @@ Object  bus "bus"
                 }
             }
         ],
- has    light supporter container enterable static;
+ has    light supporter enterable static;
 
 Object  -> bus_driver "Bus driver"
  with   description "The bus driver sits in his place firmly,
