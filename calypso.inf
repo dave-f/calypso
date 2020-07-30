@@ -1014,7 +1014,7 @@ Object  bus "bus"
         before [;
          Enter:
             give self open;
-         Exit:
+         Exit,GetOff:
             give self open;
         ],
         after [;
@@ -1024,7 +1024,7 @@ Object  bus "bus"
             "As you step onto the bus, the driver briefly glares at
             you with suspicion, before very quickly avoiding eye
             contact.^^~Fares, please~, he annouces.";
-         Exit:
+         Exit,GetOff:
             give self ~open;
         ],
         each_turn [;
