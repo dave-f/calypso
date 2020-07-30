@@ -1150,6 +1150,10 @@ Object  -> garden_table "table"
  with   name 'table',
         description "The table is large and battered, no doubt from
             years of being kept outside in the sea air.",
+        after [;
+  	     Examine, Search:
+            <Search self>;
+	    ],
  has    static scenery supporter;
 
 Object -> -> beer_glass "beer glass"
