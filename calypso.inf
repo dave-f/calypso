@@ -820,6 +820,10 @@ Object  -> rod "fishing rod"
                 "The rod somehow feels natural in your hands.";
             }
         ],
+        after [;
+         Take:
+          give self ~concealed; ! Just in case
+        ],
  has    concealed;
 
 Object  oar "oar",
