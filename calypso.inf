@@ -311,7 +311,7 @@ Object  -> bowl "bowl"
         before [;
          Take: "The bowl is rather large and would be cumbersome.";
         ],
- has    static concealed container transparent open concealed;
+ has    static concealed container transparent open;
 
 Object  -> -> fruit "dried piece of fruit"
  with   name 'dried' 'piece' 'fruit',
