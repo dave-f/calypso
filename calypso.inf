@@ -296,11 +296,18 @@ Object  -> stove "stove"
 Object  -> table "dining table"
  with   name 'dining' 'table',
         description "A large dining table, its centrepiece being a
-            rather fetching fruit bowl.",
+            rather fetching fruit bowl. ",
         after [;
-  	     Examine, Search:
+  	     Examine:
             !give bowl ~concealed;
             <Search bowl>;
+         ],
+         before [;
+         Search:
+            !give bowl ~concealed;
+            print "The only thing on the table is a large bowl, and plenty of dust. ";
+            <Search bowl>;
+            rtrue;
 	    ],
  has    supporter static scenery;
 
