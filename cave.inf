@@ -248,6 +248,10 @@ Object  -> cave_walls "walls",
 Object  -> cave_ground "moist earth",
  with   name 'moist' 'earth' 'soil',
         description "The earth is dark and damp.",
+        before [;
+         Dig:
+          "Randomly digging achieves nothing.";
+        ],
         after [;
          Examine, Search:
             if (cave_footprints has concealed)
@@ -279,7 +283,7 @@ Object  cave_disturbed_earth "disturbed earth",
                 {
                     score++;
                     move obsidian_figure to real_location;
-                    "You uncover an obsidian figure.";
+                    "With a clear idea where to dig, you uncover an obsidian figure.";
                 }
                 else
                 {
@@ -288,7 +292,7 @@ Object  cave_disturbed_earth "disturbed earth",
             }
             else
             {
-                "You would need a tool.";
+                "You would need to dig with a tool.";
             }
         ],
  has    concealed scenery;
