@@ -94,7 +94,7 @@ Abbreviate "ove";
 Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
 Constant Headline   "^A small text adventure from Papa's Gong.^";
 
-Release 5;
+Release 6;
 
 IfNDef USE_PUNY;
 Constant MANUAL_PRONOUNS;
