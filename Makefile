@@ -5,7 +5,7 @@
 BEEBEM       := c:/Program Files (x86)/BeebEm/BeebEm.exe
 INFORM       := ../Inform6/Release/Inform6.exe
 INFORM_FLAGS := -e -D
-INFORM_LIB   := ../InformLib/lib
+INFORM_LIB   := ../inform6lib
 PUNY_LIB     := ../PunyInform/lib
 BEEBEM_FLAGS := 
 BEEBASM      := ../beebasm/beebasm.exe
@@ -22,13 +22,14 @@ all: $(OUTPUT_SSD)
 
 $(GAME): calypso.inf cave.inf island.inf town.inf
 	$(INFORM) $(INFORM_FLAGS) +$(PUNY_LIB) calypso.inf
+#	$(INFORM) $(INFORM_FLAGS) +$(INFORM_LIB) calypso.inf
 
 $(OUTPUT_SSD): $(GAME) Makefile main.asm
 	$(BEEBASM) -i main.asm -di $(OZMOO_SSD) -do $(OUTPUT_SSD)
 
 clean:
-	$(RM) $(OUTPUT_SSD)
-	$(RM) bin\*.*
+	@$(RM) $(GAME)
+	@$(RM) $(OUTPUT_SSD)
 
 run:
 	$(BEEBEM) $(BEEBEM_FLAGS) $(OUTPUT_SSD)
