@@ -359,6 +359,7 @@ Object  -> rug "rug"
  has    scenery;
 
 Object  ->-> glove "old glove"
+ with   article "an",
  with   name 'glove',
         description "One shabby old glove, its matching one has long
             since departed.",
