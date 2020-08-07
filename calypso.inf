@@ -359,6 +359,7 @@ Object  -> rug "rug"
  has    scenery;
 
 Object  ->-> glove "old glove"
+ with   article "an",
  with   name 'glove',
         description "One shabby old glove, its matching one has long
             since departed.",
@@ -1131,7 +1132,7 @@ Object  -> well "well"
             small roof upon which is engraved a fisherman.",
         before [;
          Search:
-            if (~rod.caught_coin)   !Coin.remaining()>0)
+            if (~~rod.caught_coin)
             {
                 move coin to self;
 
