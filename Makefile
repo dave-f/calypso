@@ -4,7 +4,8 @@
 
 BEEBEM       := c:/Program Files (x86)/BeebEm/BeebEm.exe
 INFORM       := ../Inform6/Release/Inform6.exe
-INFORM_FLAGS := -e -D
+INFORM_FLAGS := -e -s -v5
+#INFORM_FLAGS := -D -v5
 INFORM_LIB   := ../inform6lib
 PUNY_LIB     := ../PunyInform/lib
 BEEBEM_FLAGS := 
@@ -20,7 +21,7 @@ RM           := del
 
 all: $(OUTPUT_SSD)
 
-$(GAME): calypso.inf cave.inf island.inf town.inf
+$(GAME): calypso.inf cave.inf island.inf town.inf Makefile
 	$(INFORM) $(INFORM_FLAGS) +$(PUNY_LIB) calypso.inf
 #	$(INFORM) $(INFORM_FLAGS) +$(INFORM_LIB) calypso.inf
 
