@@ -1132,7 +1132,7 @@ Object  -> well "well"
             small roof upon which is engraved a fisherman.",
         before [;
          Search:
-            if (~rod.caught_coin)   !Coin.remaining()>0)
+            if (~~rod.caught_coin)
             {
                 move coin to self;
 
