@@ -105,6 +105,9 @@ Constant MAX_SCORE  15;
 ! Puny
 IfDef USE_PUNY;
 Constant OPTIONAL_EXTENDED_VERBSET;
+#Ifndef DEBUG;
+Constant RUNTIME_ERRORS = 0;
+#EndIf;
 Include "globals";
 Endif;
 
