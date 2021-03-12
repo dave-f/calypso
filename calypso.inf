@@ -143,19 +143,6 @@ EndIf;
 
 ! We can now include the Puny library
 IfDef USE_PUNY;
-
-Constant MSG_LOOK_BEFORE_ROOMNAME 1000;
-
-[ LibraryMessages msg p1 p2;
-	switch(msg) {
-		MSG_LOOK_BEFORE_ROOMNAME:
-		 	! Add a newline before the room name. This is standard behaviour in
-			! I6 lib but not in PunyInform.
-			new_line;
-	}
-	p1 = p2; ! Get rid of warning
-];
-
 Include "puny";
 EndIf;
 
