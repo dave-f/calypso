@@ -253,23 +253,22 @@ Object  -> wizard "old man",
                 move gold_ring to player;
                 remove gold_figure;
                 score++;
-                print "The man looks elated. ~Excellent, our work 
-                    can continue~, he informs you. ~We do still 
-                    require the other figure if we are to see this 
-                    thing through, though.~^^After briefly examining 
-                    the golden figure, he hands you a gold ring, 
+                "The man looks elated. ~Excellent, our work
+                    can continue~, he informs you. ~We do still
+                    require the other figure if we are to see this
+                    thing through, though.~^^After briefly examining
+                    the golden figure, he hands you a gold ring,
                     ~You may also find this of some use. Good luck!~";
-                rtrue;
             }
             if (noun==obsidian_figure)
             {
-                print "~Excellent, this figure will enable me to 
-                    craft the final magical ring required to put you 
-                    and your crew at rest.~^^He scurries away before 
-                    quickly returning with a ring he hands to 
-                    you.^^~It is you alone who must do the final 
-                    spell casting, good luck and may you rest in 
-                    peace!~";
+                print "~Excellent, this figure will enable me to
+                    craft the final magical ring required to put you
+                    and your crew at rest.~^^He scurries away before
+                    quickly returning with a ring he hands to
+                    you.^^~It is you alone who must do the final
+                    spell casting, good luck and may you rest in
+                    peace!~^";
                 score++;
                 remove obsidian_figure;
                 move obsidian_ring to player;
