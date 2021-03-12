@@ -6,21 +6,18 @@ Object cave "Cave",
  with   name 'cave',
         door_opened false,
         description [;
+			print "Lit up by your magical light, you notice the cave
+				is rather larger than it looked from the outside. It
+					is a relatively huge open space, ";
             if (self.door_opened)
             {
-                "Lit up by your magical light, you notice the cave 
-                is rather larger than it looked from the outside. It 
-                is a relatively huge open space, even more so now 
-                that the stone slab has moved, enabling passage to a 
-                small chamber to the north.";
+				"even more so now that the stone slab has moved, enabling
+				passage to a small chamber to the north.";
             }
             else
             {
-                "Lit up by your magical light, you notice the 
-                cave is rather larger than it looked from the outside. 
-                It is a relatively huge open space, and the far wall is 
-                taken up by a huge stone slab, at the side of which are 
-                five buttons set into the wall.";
+                "and the far wall is taken up by a huge stone slab, at the side
+				of which are five buttons set into the wall.";
             }
             ],
         n_to [;
@@ -52,13 +49,12 @@ Object  -> slab "slab",
         {
             score++;
             cave.door_opened = true;
-            print "As you press this button, the huge stone slab 
-                moves to the right slowly, revealing an inner 
+            "As you press this button, the huge stone slab
+                moves to the right slowly, revealing an inner
                 chamber to the north.";
-            rtrue;
         }
-    }            
-    
+    }
+
     rfalse;
 ];
 

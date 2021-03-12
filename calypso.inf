@@ -143,6 +143,19 @@ EndIf;
 
 ! We can now include the Puny library
 IfDef USE_PUNY;
+
+Constant MSG_LOOK_BEFORE_ROOMNAME 1000;
+
+[ LibraryMessages msg p1 p2;
+	switch(msg) {
+		MSG_LOOK_BEFORE_ROOMNAME:
+		 	! Add a newline before the room name. This is standard behaviour in
+			! I6 lib but not in PunyInform.
+			new_line;
+	}
+	p1 = p2; ! Get rid of warning
+];
+
 Include "puny";
 EndIf;
 
@@ -884,7 +897,7 @@ Object  boating_lake "Boating lake"
                  them up in one bite. If you didn't know better,
                  you'd swear it was some sort of Plesiosaurus. In
                  any case, it disappears under the surface again,
-                 satisfied.";
+                 satisfied.^";
              ! remove crumbs, ducks and monster
              remove breadcrumbs;
              remove ducks;
@@ -1052,7 +1065,7 @@ Object  -> bus_driver "Bus driver"
             seeming eager to get on with the journey.",
         parse_name [j;
             j=NextWord();
-            if (j=='driver')
+            if (j=='driver' or 'man')
             {
                 return 1;
             }
@@ -1292,7 +1305,7 @@ EndIf;
       remove scarecrow;
       score++;
 
-      print "One of the sparks from the ring catches some
+      "One of the sparks from the ring catches some
         of the dry straw on the scarecrow, immediately
         igniting it. Very quickly it burns away to
         nothing, leaving a rigid oar which once
