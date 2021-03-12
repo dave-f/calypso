@@ -252,9 +252,11 @@ Object  -> lighthouse_lamp "main lighthouse lamp"
  has    static switchable container open;
 
 Object  lighthouseTimer
- with   time_out [; print "^From below, you hear someone trying to
-    open the lighthouse door."; ],
-        time_left;
+ with   time_out [;
+ 			"^From below, you hear someone trying to
+    			open the lighthouse door.";
+		],
+        time_left 0;
 
 Object  lounge "Living quarters"
  with   name 'furniture' 'dust',  ! this just means player can refer to them !
@@ -519,6 +521,7 @@ Object  outside "Outside the lighthouse"
                         print " For a brief moment you think you saw a
                             ship in trouble on the horizon.";
                     }
+					new_line;
                 }
                 self.counter = 2+random(3);
             }
@@ -578,7 +581,7 @@ Object  -> weather_vane "weather vane",
         ! Based on every N turns, change direction.
         ! Pick random N,S,E,W  .. west of course is lighthouse.  When west, ship in distance.
         description [;
-            print "The weather vane is a magnificent black eagle,
+        	"The weather vane is a magnificent black eagle,
                 with gold and silver wings. Underneath it are the
                 compass directions, indicating the direction of the
                 wind. It is currently pointing ", (string)self.wind_direction, ".";
@@ -857,7 +860,7 @@ Object  boating_lake "Boating lake"
                 else
                 {
                     print "Using the oar, you manage to paddle
-                        across the water.";
+                        across the water.^";
                     return(island_tip);
                 }
             }
@@ -938,6 +941,7 @@ Object  -> boat "decorative boat"
                 the lake.";
             }
 
+			new_line;
             rtrue;
         ],
         before [;
@@ -1149,7 +1153,7 @@ Object  -> well "well"
                 "The well is dark and appears to be empty.";
             }
          Enter:
-            "The well is too small for you to fit into";
+            "The well is too small for you to fit into.";
          Empty,EmptyT:
             "Not really possible.";
         ],
@@ -1305,7 +1309,7 @@ EndIf;
     {
       score++;
       give cave light;
-      print "Magical light fills the room and you begin to
+      "Magical light fills the room and you begin to
           make out your surroundings...";
     }
     rtrue;
@@ -1322,7 +1326,7 @@ EndIf;
           ! Won
           deadflag=2;
 
-          print "The rings begin to glow and fuse
+          "The rings begin to glow and fuse
               together. A peculiar sensation comes
               over you and you feel as though you are
               becoming lighter and almost falling
@@ -1345,22 +1349,20 @@ EndIf;
         }
         else
         {
-          print "The obsidian ring glows fiercely.";
+        	"The obsidian ring glows fiercely.";
         }
       }
       else
       {
-        print "The obsidian rings glows slightly but
-            somehow this place doesn't feel right.";
+		  "The obsidian rings glows slightly but
+        		somehow this place doesn't feel right.";
       }
     }
     else
     {
-        print "The obsidian ring glows slightly but seems
+    	"The obsidian ring glows slightly but seems
             incomplete without the other rings.";
     }
-
-    rtrue;
   }
   "Nothing happens.";
 ];
