@@ -58,170 +58,59 @@ Object  -> slab "slab",
     rfalse;
 ];
 
-Object  -> button_lion   "lion button",
- with   name 'lion' 'button' 'buttons//p',
-        plural 'buttons',
-        description "A picture of a lion is carved into this button.",
+Class	Button
+ with   name 'button' 'buttons//p',
+		short_name [;
+			print (string) self.animal_word, " button";
+			rtrue;
+		],
+        plural "buttons",
+        description [;
+			print "A picture of a ", (string) self.animal_word,
+				" is carved into this button. ";
+		],
         list_together BUTTONS_GROUP,
         after [;
-         SwitchOn,SwitchOff: return CheckCaveButtons();
-         ],
-         before [;
-         Push:
-            if (self has on)
-            {
-                give self ~on;
-            }
-            else
-            {
-                give self on;
-            }
-            if (~~CheckCaveButtons())
-            {
-                if (self has on)
-                {
-                    print "You switch the lion button on.^";
-                }
-                else
-                {
-                    print "You switch the lion button off.^";
-                }
-            }
-            rtrue;
-        ],
- has    switchable static on;
-
-Object  -> button_zebra  "zebra button",
- with   name 'zebra' 'button' 'buttons//p',
-        plural 'buttons',
-        description "A picture of a zebra is carved into this button.",
-        list_together BUTTONS_GROUP,
-        after [;
-         SwitchOn,SwitchOff: return CheckCaveButtons();
-        ],
-         before [;
-         Push:
-            if (self has on)
-            {
-                give self ~on;
-            }
-            else
-            {
-                give self on;
-            }
-            if (~~CheckCaveButtons())
-            {
-                if (self has on)
-                {
-                    print "You switch the zebra button on.^";
-                }
-                else
-                {
-                    print "You switch the zebra button off.^";
-                }
-            }
-            rtrue;
+        	SwitchOn, SwitchOff:
+				return CheckCaveButtons();
+    	],
+        before [;
+			Push:
+				if (self has on)
+				{
+				    <<SwitchOff self>>;
+				}
+				else
+				{
+					<<SwitchOn self>>;
+				}
         ],
  has    switchable static;
 
-Object  -> button_penguin  "penguin button",
- with   name 'penguin' 'button' 'buttons//p',
-        plural 'buttons',
-        description "A picture of a penguin is carved into this button.",
-        list_together BUTTONS_GROUP,
-        after [;
-         SwitchOn,SwitchOff: return CheckCaveButtons();
-        ],
-         before [;
-         Push:
-            if (self has on)
-            {
-                give self ~on;
-            }
-            else
-            {
-                give self on;
-            }
-            if (~~CheckCaveButtons())
-            {
-                if (self has on)
-                {
-                    print "You switch the penguin button on.^";
-                }
-                else
-                {
-                    print "You switch the penguin button off.^";
-                }
-            }
-            rtrue;
-        ],
- has    switchable static on;
+Button -> button_lion
+ with	name 'lion',
+		animal_word "lion",
+ has	on;
 
-Object  -> button_toucan  "toucan button",
- with   name 'toucan' 'button' 'buttons//p',
-        plural 'buttons',
-        description "A picture of a toucan is carved into this button.",
-        list_together BUTTONS_GROUP,
-        after [;
-         SwitchOn,SwitchOff: return CheckCaveButtons();
-        ],
-         before [;
-         Push:
-            if (self has on)
-            {
-                give self ~on;
-            }
-            else
-            {
-                give self on;
-            }
-            if (~~CheckCaveButtons())
-            {
-                if (self has on)
-                {
-                    print "You switch the toucan button on.^";
-                }
-                else
-                {
-                    print "You switch the toucan button off.^";
-                }
-            }
-            rtrue;
-        ],
- has    switchable static on;
+Button -> button_zebra
+ with	name 'zebra',
+		animal_word "zebra",
+ has	~on;
 
-Object  -> button_pelican "pelican button",
- with   name 'pelican' 'button' 'buttons//p',
-        plural 'buttons',
-        description "A picture of a pelican is carved into this button.",
-        list_together BUTTONS_GROUP,
-        after [;
-         SwitchOn,SwitchOff: return CheckCaveButtons();
-        ],
-         before [;
-         Push:
-            if (self has on)
-            {
-                give self ~on;
-            }
-            else
-            {
-                give self on;
-            }
-            if (~~CheckCaveButtons())
-            {
-                if (self has on)
-                {
-                    print "You switch the pelican button on.^";
-                }
-                else
-                {
-                    print "You switch the pelican button off.^";
-                }
-            }
-            rtrue;
-        ],
- has    switchable static;
+Button -> button_penguin
+ with	name 'penguin',
+		animal_word "penguin",
+ has	on;
+
+Button -> button_toucan
+ with	name 'toucan',
+		animal_word "toucan",
+ has	on;
+
+Button -> button_pelican
+ with	name 'pelican',
+		animal_word "pelican",
+ has	~on;
 
  ! I think you should have to examine earth to see footprints, give
  ! them ~concealed rather than the disturbed earth.. or rather, give
