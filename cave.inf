@@ -59,16 +59,7 @@ Object  -> slab "slab",
 ];
 
 Class	Button
- with   parse_name [ w1 i;
-			w1 = NextWord();
-			if(w1 == self.name) {
-				i++;
-				w1 = NextWord();
-			}
-			if(w1 == 'button' or 'buttons//p')
-				i++;
-			return i;
-		],
+ with   name 'button' 'buttons//p',
 		short_name [;
 			print (string) self.animal_word, " button";
 			rtrue;
