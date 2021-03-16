@@ -1,6 +1,8 @@
 ! Calypso part 4 : Cave : Contains ship treasure.
 
+#IfnDef USE_PUNY;
 Constant BUTTONS_GROUP = "stone buttons with animal pictures on";
+#EndIf;
 
 Object cave "Cave",
  with   name 'cave',
@@ -69,7 +71,9 @@ Class	Button
 			print "A picture of a ", (string) self.animal_word,
 				" is carved into this button. ";
 		],
+#IfnDef USE_PUNY;
         list_together BUTTONS_GROUP,
+#EndIf;
         after [;
         	SwitchOn, SwitchOff:
 				return CheckCaveButtons();

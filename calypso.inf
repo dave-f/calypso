@@ -5,6 +5,8 @@
 !   it adds ~10 KB to the story file size and it makes the game slower.
 ! $OMIT_UNUSED_ROUTINES=1 makes the compiler remove all routines which aren't used. This can save some space.
 
+! This game is meant to be compiled using either the Inform 6 standard library v6.12.4+ or PunyInform v2.2+
+!
 ! To compile for standard inform:
 ! Comment out USE_PUNY
 ! ../inform6/i6 +../inform6lib/ calypso.inf -v5es
@@ -22,9 +24,9 @@ Constant USE_PUNY;
 #EndIf;
 #EndIf;
 
-IfDef USE_PUNY;
+#IfDef USE_PUNY;
 Constant CUSTOM_ABBREVIATIONS;
-EndIf;
+#EndIf;
 
 Abbreviate ". ";
 Abbreviate ", ";
@@ -32,91 +34,93 @@ Abbreviate " the ";
 Abbreviate "The";
 Abbreviate "You";
 Abbreviate "ing";
-Abbreviate "you";
 Abbreviate "and";
+Abbreviate "you";
 Abbreviate "lighthouse";
-Abbreviate "button";
 Abbreviate "ther";
+Abbreviate "tion";
+Abbreviate "s to";
+Abbreviate " to ";
+Abbreviate "ere";
+Abbreviate "light";
+Abbreviate "hough";
+Abbreviate "seem";
+Abbreviate "s a";
+Abbreviate "look";
+Abbreviate "_to/";
+Abbreviate "out";
+Abbreviate "d swear it was some sort of Plesiosauru";
+Abbreviate "That";
+Abbreviate "n't";
+Abbreviate "scarecrow";
+Abbreviate "shop";
+Abbreviate "not";
+Abbreviate "for";
 Abbreviate " th";
 Abbreviate " be";
 Abbreviate " to";
-Abbreviate "light";
-Abbreviate " of";
-Abbreviate " in";
-Abbreviate " seems";
-Abbreviate " is";
-Abbreviate " an";
-Abbreviate " mo";
+Abbreviate " small";
 Abbreviate " some";
-Abbreviate " sma";
-Abbreviate " look";
+Abbreviate "res";
+Abbreviate " of";
 Abbreviate " fi";
+Abbreviate " in";
 Abbreviate " with";
-Abbreviate "use";
-Abbreviate " can";
-Abbreviate " not";
-Abbreviate "That";
-Abbreviate " pa";
-Abbreviate " st";
-Abbreviate " we";
-Abbreviate " take";
-Abbreviate " la";
-Abbreviate " here";
-Abbreviate " it";
-Abbreviate " co";
-Abbreviate " are";
-Abbreviate " from";
+Abbreviate " mo";
 Abbreviate " ro";
+Abbreviate " an";
+Abbreviate "use";
+Abbreviate " is";
+Abbreviate " st";
+Abbreviate " takes";
+Abbreviate " al";
+Abbreviate " la";
+Abbreviate " co";
+Abbreviate " ca";
+Abbreviate "ght";
+Abbreviate " it";
 Abbreviate " de";
+Abbreviate " from";
 Abbreviate " have";
-Abbreviate "direction";
-Abbreviate " switch";
-Abbreviate "_to/";
-Abbreviate "This";
 Abbreviate "which";
+Abbreviate " would";
+Abbreviate " cl";
 Abbreviate " do";
+Abbreviate " village";
+Abbreviate "This";
 Abbreviate " on";
-Abbreviate "ake";
-Abbreviate "n't ";
-Abbreviate "are";
-Abbreviate "ave";
-Abbreviate "at ";
-Abbreviate "igh";
-Abbreviate "is ";
-Abbreviate "the ";
-Abbreviate "'s ";
-Abbreviate "illage ";
-Abbreviate "though";
-Abbreviate "before";
-Abbreviate "see";
-Abbreviate "ove";
+Abbreviate "rea";
+Abbreviate " fa";
+Abbreviate " as";
 
 Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
 Constant Headline   "^A small text adventure from Papa's Gong.^";
 
 Release 6;
 
-IfNDef USE_PUNY;
+#IfnDef USE_PUNY;
 Constant MANUAL_PRONOUNS;
-EndIf;
+#EndIf;
 
 Constant MAX_SCORE  15;
 
 ! Puny
-IfDef USE_PUNY;
+#IfDef USE_PUNY;
+Constant STATUSLINE_SCORE; Statusline score;
 Constant OPTIONAL_EXTENDED_VERBSET;
+Constant OPTIONAL_PRINT_SCENERY_CONTENTS;
 #Ifndef DEBUG;
 Constant RUNTIME_ERRORS = 0;
 #EndIf;
 Include "globals";
-Endif;
+#EndIf;
 
 ! Standard
-IfNDef USE_PUNY;
+#IfnDef USE_PUNY;
 Include "parser";
 Include "verblib";
 Include "infglk";
-EndIf;
+#EndIf;
 
 [DeathMessage; print "You have lost"; ];
 
@@ -142,9 +146,25 @@ EndIf;
 ];
 
 ! We can now include the Puny library
-IfDef USE_PUNY;
+#IfDef USE_PUNY;
+
+Constant MSG_LOOK_BEFORE_ROOMNAME 1000;
+
+[ LibraryMessages msg p1 p2;
+	switch(msg) {
+		MSG_LOOK_BEFORE_ROOMNAME:
+		 	! Add a newline before the room name. This is standard behaviour in
+			! I6 lib but not in PunyInform.
+			if(turns >= 0) ! Don't add newline in initial Look, or we get double newlines there
+			{
+				new_line;
+			}
+	}
+	p1 = p2; ! Get rid of warning
+];
+
 Include "puny";
-EndIf;
+#EndIf;
 
 Attribute legible;
 
@@ -529,26 +549,19 @@ Object  outside "Outside the lighthouse"
  private counter 3,
  has    light;
 
-IfDef USE_PUNY;
 Object -> lighthouse "lighthouse"
  with   name 'lighthouse',
         description "From outside, the lighthouse seems huge and
             somehow comforting.",
         before [;
+#IfDef USE_PUNY;
          Enter: <<Go FAKE_W_OBJ>>;
-        ],
- has    static scenery;
-!EndIf;
-IfNot;
-Object -> lighthouse "lighthouse"
- with   name 'lighthouse',
-        description "From outside, the lighthouse seems huge and
-            somehow comforting.",
-        before [;
+#IfNot;
          Enter: <<Go w_obj>>;
+#EndIf;
         ],
  has    static scenery;
-EndIf;
+
 ! There is a slot in the shaft for 3 rings... spelling out MYSTICAL MARINER
 
 Object  -> stone_pillar "stone pillar",
@@ -924,7 +937,6 @@ Object  -> ducks "ducks", ! These fellas get eaten when bread thrown
         ],
  has    static pluralname scenery animate;
 
-IfDef USE_PUNY;
 Object  -> boat "decorative boat"
  with   name 'boat',
         description "Presumably once used for idle tours around the
@@ -945,6 +957,7 @@ Object  -> boat "decorative boat"
             rtrue;
         ],
         before [;
+#IfDef USE_PUNY;
          Go:
             if (selected_direction==s_to && real_location==boating_lake)
             {
@@ -958,28 +971,7 @@ Object  -> boat "decorative boat"
             {
                 return 0;
             }
-        ],
- has    static enterable container open;
-IfNot;
-Object  -> boat "decorative boat"
- with   name 'boat',
-        description "Presumably once used for idle tours around the
-            lake, this boat now looks a little worse for wear,
-            although it remains afloat, and with a decent paddle
-            could probably be used to get across the lake.",
-        after [;
-         Enter:
-            print "You step cautiously into the boat.";
-
-            if (boating_lake.monster_present)
-            {
-                " As you do so, you notice a peculiar ripple out in
-                the lake.";
-            }
-
-            rtrue;
-        ],
-        before [;
+#IfNot;
          Go:
             if (noun==s_obj && real_location==boating_lake)
             {
@@ -993,9 +985,9 @@ Object  -> boat "decorative boat"
             {
                 return 0;
             }
+#EndIf;
         ],
  has    static enterable container open;
-EndIf;
 
 Object  bus "bus"
  private counter 0,
@@ -1183,7 +1175,7 @@ Object -> -> beer_glass "beer glass"
          Receive:
             if (self in player)
             {
-                if (noun==rod || noun==spade)
+                if (noun==rod or spade)
                 {
                     "That won't fit!"; ! TODO: Add other rules
                 }
@@ -1270,9 +1262,9 @@ Include ">cave.inf";
 
 ! ============================================================================ !
 
-IfNDef USE_PUNY;
+#IfnDef USE_PUNY;
 Include "Grammar";
-EndIf;
+#EndIf;
 
 [ UnlockWithoutKeySub;
   "You would need to specify which key to use, like ~unlock door with blue key~.";
@@ -1370,8 +1362,9 @@ EndIf;
 Verb 'hang'     * held 'on' noun    -> PutOn;
 Verb 'fish'     * -> Fish;
 Verb 'cast'     * -> Fish;
-Verb 'paddle'   * 'boat' -> Paddle;
-Verb 'row'      * 'boat' -> Paddle;
+Verb 'paddle' 'row'
+                * -> Paddle
+                * 'boat' -> Paddle;
 
 Extend 'read' first * legible -> Read;
 Extend 'get' first * noun 'with' 'rod' -> GetItemWithRod;
@@ -1382,7 +1375,7 @@ Extend 'feed' first * 'ducks' -> FeedDucks;
 Extend 'say' first  * topic -> SayMagicWord;
 Extend 'unlock' first * noun -> UnlockWithoutKey;
 
-IfDef USE_PUNY;
+#IfDef USE_PUNY;
 [LookUnderSub;
   if(noun has animate or scenery) "What a concept!";
   if(noun in player) "But you are holding ", (ItOrThem) noun, "!";
@@ -1390,7 +1383,7 @@ IfDef USE_PUNY;
 ];
 Extend 'look'
   * 'under' noun -> LookUnder;
-EndIf;
+#EndIf;
 
 ! Feedin the ducks
 [ FeedDucksSub;
@@ -1441,7 +1434,7 @@ EndIf;
 ];
 
 ! Used to cross water
-IfDef USE_PUNY;
+#IfDef USE_PUNY;
 [ PaddleSub;
     if (player in boat)
     {
@@ -1459,7 +1452,7 @@ IfDef USE_PUNY;
         "You need to be in a boat!";
     }
 ];
-IfNot;
+#IfNot;
 [ PaddleSub;
     if (player in boat)
     {
@@ -1477,6 +1470,6 @@ IfNot;
         "You need to be in a boat!";
     }
 ];
-EndIf;
+#EndIf;
 
 ! ============================================================================ !
