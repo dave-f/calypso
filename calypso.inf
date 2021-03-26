@@ -1190,7 +1190,10 @@ Object -> -> beer_glass "beer glass"
 Object  coin "silver coin",
  with   name 'silver' 'coin' 'money',
         before [;
-         Take: if (self in well)
+         Examine:
+		  	rfalse;
+		default:
+		 if (self in well)
          {
              "You cannot reach it!";
          }
