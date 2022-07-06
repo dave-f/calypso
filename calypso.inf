@@ -5,15 +5,16 @@
 !   it adds ~10 KB to the story file size and it makes the game slower.
 ! $OMIT_UNUSED_ROUTINES=1 makes the compiler remove all routines which aren't used. This can save some space.
 
-! This game is meant to be compiled using either the Inform 6 standard library v6.12.4+ or PunyInform v2.2+
+! This game is meant to be compiled using Inform v6.36 and 
+! either the Inform 6 standard library v6.12.6+ or PunyInform v4.0+
 !
 ! To compile for standard inform:
 ! Comment out USE_PUNY
 ! ../inform6/i6 +../inform6lib/ calypso.inf -v5es
 !
 ! To compile for Puny:
-! Comment in USE_PUNY, or use -v3 to compile to z3
-! ../inform6/i6 +../Punyinform/lib calypso.inf -v5es (or -v3es)
+! Comment in USE_PUNY or add $#USE_PUNY to the commandline, or use -v3 to compile to z3
+! ../inform6/i6 +../Punyinform/lib calypso.inf $#USE_PUNY -v5es (or -v3es)
 
 ! Constant USE_PUNY;
 
@@ -116,6 +117,9 @@ Include "infglk";
 Constant STATUSLINE_SCORE; Statusline score;
 Constant OPTIONAL_EXTENDED_VERBSET;
 Constant OPTIONAL_PRINT_SCENERY_CONTENTS;
+#IfV5;
+Constant OPTIONAL_PROVIDE_UNDO;
+#Endif;
 #Ifndef DEBUG;
 Constant RUNTIME_ERRORS = 0;
 #EndIf;
@@ -1191,7 +1195,7 @@ Object -> -> beer_glass "beer glass"
 Object  coin "silver coin",
  with   name 'silver' 'coin' 'money',
         before [;
-         Examine:
+        Examine, GetItemWithRod:
 		  	rfalse;
 		default:
 		 if (self in well)
@@ -1260,7 +1264,7 @@ Include ">cave.inf";
     "^^Darkness. Quickly, this is followed by a burning white light
     accompanied by intense pain rocketing up and down your body.
     Your efforts to scream are initially silent, giving way after a
-    few seconds to a piercing scream as the bright light fades...^^";
+    few seconds to a piercing scream as the bright light fades...^";
 ];
 
 
