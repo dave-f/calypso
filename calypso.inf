@@ -302,6 +302,11 @@ Object  -> stove "stove"
         description "A stove used for preparing food. Looks like it
             might still work if you wanted to cook something in it.",
         before [;
+         Receive: if (noun==mouse)
+         {
+             move mouse to location;
+             "The mouse smells a rat (fancy that!) and jumps out your hands!";
+         }
          SwitchOn: if (self has open)
          {
              "You cannot turn the stove on while it's open!";
