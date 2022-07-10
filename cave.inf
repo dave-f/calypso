@@ -162,7 +162,7 @@ Object  -> cave_footprints "footprints",
 ! Mulling the door closing, leaving player in dark? Have to get out.. Hmm.
 
 Object  cave_disturbed_earth "disturbed earth",
- with   name 'disturbed' 'earth',
+ with   name 'disturbed' 'patch' 'of' 'earth',
         description "A small patch of recently disturbed earth.",
         before [;
          Dig:
