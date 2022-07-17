@@ -1,7 +1,5 @@
 # calypso
-A simple, complete, text adventure written using Inform 6.
-
-Now includes support for [PunyInform](https://github.com/johanberntsson/PunyInform)
+A simple, complete, text adventure written using Inform 6.  Now includes support for [PunyInform](https://github.com/johanberntsson/PunyInform)!
 
 Build using the Inform compiler:
 
@@ -9,7 +7,7 @@ Build using the Inform compiler:
 path/to/compiler/inform +path/to/standardlibrary/lib -v5es calypso.inf
 ```
 
-Build using PunyInform
+Build using PunyInform:
 
 ```
 path/to/compiler/inform +path/to/punyinform/lib -v5es $#USE_PUNY calypso.inf
