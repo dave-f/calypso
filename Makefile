@@ -1,9 +1,9 @@
 #
 # Makefile for Calypso
 
-INFORM       := ../Inform6/Release/Inform6.exe
+INFORM       := ../Inform6/Inform6.exe
 INFORM_FLAGS := -v5es # -D
-INFORM_LIB   := ../Inform6Lib/
+INFORM_LIB   := ../inform6lib-6.12.6
 PUNY_FLAGS   := -v3es # -D
 PUNY_LIB     := ../PunyInform/lib
 GAME_INFORM  := calypso.z5
