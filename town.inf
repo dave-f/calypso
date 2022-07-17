@@ -219,7 +219,7 @@ Object  wizard_shop "Shop of curios",
                 move silver_ring to player;
                 move lighthouse_portal to bottom;
 #IfDef USE_PUNY;
-				update_moved = true; ! Puny needs to be notified when the player gets an object
+                update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
                 print "^As you enter the shop, the old man stops 
                     what he's doing and immediately rushes over to 
@@ -255,7 +255,7 @@ Object  -> wizard "old man",
             {
                 move gold_ring to player;
 #IfDef USE_PUNY;
-				update_moved = true; ! Puny needs to be notified when the player gets an object
+                update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
                 remove gold_figure;
                 score++;
@@ -279,7 +279,7 @@ Object  -> wizard "old man",
                 remove obsidian_figure;
                 move obsidian_ring to player;
 #IfDef USE_PUNY;
-				update_moved = true; ! Puny needs to be notified when the player gets an object
+                update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
                 ! Make sure wind is not east.
                 weather_vane.wind_direction=NORTH_STRING;
