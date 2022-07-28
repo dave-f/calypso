@@ -1382,8 +1382,7 @@ Verb 'paddle' 'row'
 Extend 'read' first * legible -> Read;
 Extend 'get' first * noun 'with' 'rod' -> GetItemWithRod;
 Extend 'take' first * noun 'with' 'rod' -> GetItemWithRod;
-Extend 'feed' first * 'ducks' 'with' 'crumbs' -> FeedDucks;
-Extend 'feed' first * 'ducks' 'with' 'breadcrumbs' -> FeedDucks;
+Extend 'feed' first * 'ducks' 'with' 'crumbs'/'breadcrumbs' -> FeedDucks;
 Extend 'feed' first * 'ducks' -> FeedDucks;
 Extend 'say' first  * topic -> SayMagicWord;
 Extend 'unlock' first * noun -> UnlockWithoutKey;
