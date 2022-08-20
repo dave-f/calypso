@@ -22,3 +22,5 @@ The compiler can be found [here](https://github.com/DavidKinder/Inform6/releases
 The standard library can be found [here](https://gitlab.com/DavidGriffith/inform6lib/-/releases)
 
 PunyInform can be found [here](https://github.com/johanberntsson/PunyInform/releases)
+
+This work is under GPLv3, please see the LICENSE file.
