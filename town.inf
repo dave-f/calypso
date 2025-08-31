@@ -64,6 +64,9 @@ Object  generic_shop_inside "shop",
  with   name 'shop',
         found_in baker_shop hardware_shop wizard_shop,
         description [;
+#Ifdef USE_PUNY;
+            new_line;
+#Endif;
             <<Look>>;
         ],
  has    scenery;
@@ -95,6 +98,7 @@ Object  baker_shop "Bakery",
          {
              remove mouse;
              remove baker;
+             scope_modified = true;
              score++;
              "The mouse instantly smells the delights of its 
              surroundings, and runs round the back of the shop in 
@@ -114,7 +118,7 @@ Object  -> baker "baker",
 
 Object  -> bakery_counter "counter",
  with   name 'counter',
-        crumbs_taken,
+        crumbs_taken false,
         description [;
             print "The glass bakery counter houses a bewildering 
                 array of bread, cakes, and pastries.";
@@ -218,6 +222,7 @@ Object  wizard_shop "Shop of curios",
             {
                 move silver_ring to player;
                 move lighthouse_portal to bottom;
+                scope_modified = true;
 #IfDef USE_PUNY;
                 update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
@@ -247,6 +252,7 @@ Object  wizard_shop "Shop of curios",
 
 Object  -> wizard "old man",
  with   name 'old' 'man',
+        article "an",
         description "The old man stands in the corner of the room 
             tidying a bookcase.",
         life [;
@@ -258,6 +264,7 @@ Object  -> wizard "old man",
                 update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
                 remove gold_figure;
+                scope_modified = true;
                 score++;
                 "The man looks elated. ~Excellent, our work
                     can continue~, he informs you. ~We do still
@@ -278,6 +285,7 @@ Object  -> wizard "old man",
                 score++;
                 remove obsidian_figure;
                 move obsidian_ring to player;
+                scope_modified = true;
 #IfDef USE_PUNY;
                 update_moved = true; ! Puny needs to be notified when the player gets an object
 #EndIf;
@@ -300,6 +308,9 @@ Object  -> shop_portal "glowing portal",
          Enter:
             print "A blinding flash of light and you materialise
                 elsewhere..^";
+#Ifdef USE_PUNY;
+            new_line;
+#Endif;
             PlayerTo(bottom);
             rtrue;
         ],

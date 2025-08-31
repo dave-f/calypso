@@ -49,7 +49,7 @@ object  -> clearing "clearing",
 
 object  -> sand "sand", ! Todo: wet property, set to true when mix
  with   name 'sand',
-        wet false,
+!        wet false,
         description "The sand is fine and dry."
  has    pluralname;
 
@@ -119,6 +119,7 @@ object  -> plinth_block "block",
                 {
                     remove beer_glass;
                     move gold_figure to location;
+                    scope_modified = true;
                     score++;
                     "With a satisfying click, the block slides down 
                     into the plinth, and a small opening appears at 

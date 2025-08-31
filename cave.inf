@@ -66,12 +66,12 @@ Class	Button
 			print (string) self.animal_word, " button";
 			rtrue;
 		],
-        plural "buttons",
         description [;
 			print "A picture of a ", (string) self.animal_word,
 				" is carved into this button. ";
 		],
 #IfnDef USE_PUNY;
+        plural "buttons",
         list_together BUTTONS_GROUP,
 #EndIf;
         after [;
@@ -148,6 +148,7 @@ Object  -> cave_ground "moist earth",
                 give cave_footprints ~concealed;
                 give cave_disturbed_earth ~concealed;
                 move cave_disturbed_earth to real_location;
+                scope_modified=true;
                 "You spot some footprints in the ground leading to a disturbed patch of earth.";
             }
         ],
@@ -172,6 +173,7 @@ Object  cave_disturbed_earth "disturbed earth",
                 {
                     score++;
                     move obsidian_figure to real_location;
+                    scope_modified=true;
                     "With a clear idea where to dig, you uncover an obsidian figure.";
                 }
                 else

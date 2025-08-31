@@ -1,20 +1,34 @@
 !% -~S
 !% $OMIT_UNUSED_ROUTINES=1
-! The very first lines of the main source code file for a game can contain compiler options, like the two lines above.
-! -~S disables strict error checking. This is otherwise used in z5 and z8 games by default. While useful for debugging,
-!   it adds ~10 KB to the story file size and it makes the game slower.
-! $OMIT_UNUSED_ROUTINES=1 makes the compiler remove all routines which aren't used. This can save some space.
+!% $ZCODE_LESS_DICT_DATA=1
+!% $LONG_DICT_FLAG_BUG=0
+!% $ZCODE_MAX_INLINE_STRING=4000
+!% $ZCODE_COMPACT_GLOBALS=1
+!% $MAX_ABBREVS=96
+!!% $OMIT_SYMBOL_TABLE=1 ! Saves space, only possible without DEBUG mode
 
-! This game is meant to be compiled using Inform v6.36 and 
-! either the Inform 6 standard library v6.12.6+ or PunyInform v4.0+
+! The very first lines of the main source code file for a game can contain compiler options, like the two lines above.
+! -~S: disable strict error checking, to make the game smaller and faster
+! $OMIT_UNUSED_ROUTINES=1: remove all routines which aren't used
+! $ZCODE_LESS_DICT_DATA=1: remove an empty data byte in every dictionary entry
+! $LONG_DICT_FLAG_BUG=0: fix a bug with flags on long words, e.g. 'skyscrapers//p'
+! $ZCODE_MAX_INLINE_STRING=4000: keep strings inline in code when possible
+! $ZCODE_COMPACT_GLOBALS=1: don't take up space for unused globals 
+! $MAX_ABBREVS=96: use 96 abbreviations (default: 64), for better text compression 
+! $OMIT_SYMBOL_TABLE=1: don't store names of properties etc
+
+! This game is meant to be compiled using Inform v6.43 and 
+! either the Inform 6 standard library v6.12.7+ or PunyInform v6.0
 !
 ! To compile for standard inform:
 ! Comment out USE_PUNY
-! ../inform6/i6 +../inform6lib/ calypso.inf -v5es
+! ../inform6/i6 +../inform6lib/ calypso.inf --opt OMIT_SYMBOL_TABLE=1 -v5es
+! For debug: ../inform6/i6 +../inform6lib/ calypso.inf -D -v5es
 !
 ! To compile for Puny:
 ! Comment in USE_PUNY or add $#USE_PUNY to the commandline, or use -v3 to compile to z3
-! ../inform6/i6 +../Punyinform/lib calypso.inf $#USE_PUNY -v5es (or -v3es)
+! ../inform6/i6 +../Punyinform/lib calypso.inf $#USE_PUNY --opt OMIT_SYMBOL_TABLE=1 -v5es (or -v3es)
+! For debug: ../inform6/i6 +../Punyinform/lib calypso.inf -D $#USE_PUNY -v5es (or -v3es) 
 
 ! Constant USE_PUNY;
 
@@ -29,94 +43,140 @@ Constant USE_PUNY;
 Constant CUSTOM_ABBREVIATIONS;
 #EndIf;
 
-Abbreviate ". ";
-Abbreviate ", ";
-Abbreviate " the ";
-Abbreviate "The";
-Abbreviate "You";
-Abbreviate "ing";
-Abbreviate "and";
-Abbreviate "you";
+Abbreviate "The ducks move toward the bread, and as they do so, a huge beast emerges from the lake, gobbling them up in one bite. If you didn't know better, you'd swear it was some sort of Plesiosaurus. In any case, it disappears under the surface again, satisfied.";
+Abbreviate " tastes a little off, and is shortly followed by strange visions, and death.";
+Abbreviate ". North takes you ";
+Abbreviate "unexpected.";
 Abbreviate "lighthouse";
-Abbreviate "ther";
-Abbreviate "tion";
-Abbreviate "s to";
-Abbreviate " to ";
-Abbreviate "ere";
-Abbreviate "light";
-Abbreviate "hough";
-Abbreviate "seem";
-Abbreviate "s a";
-Abbreviate "look";
-Abbreviate "_to/";
-Abbreviate "out";
-Abbreviate "d swear it was some sort of Plesiosauru";
-Abbreviate "That";
-Abbreviate "n't";
+Abbreviate "You can't ";
+Abbreviate "igh street";
 Abbreviate "scarecrow";
-Abbreviate "shop";
-Abbreviate "not";
-Abbreviate "for";
-Abbreviate " th";
-Abbreviate " be";
-Abbreviate " to";
-Abbreviate " small";
-Abbreviate " some";
-Abbreviate "res";
-Abbreviate " of";
-Abbreviate " fi";
-Abbreviate " in";
-Abbreviate " with";
-Abbreviate " mo";
-Abbreviate " ro";
-Abbreviate " an";
-Abbreviate "use";
-Abbreviate " is";
-Abbreviate " st";
-Abbreviate " takes";
-Abbreviate " al";
-Abbreviate " la";
-Abbreviate " co";
-Abbreviate " ca";
-Abbreviate "ght";
-Abbreviate " it";
-Abbreviate " de";
+Abbreviate " you can ";
+Abbreviate "mouse hol";
+Abbreviate " continue";
+Abbreviate "obsidian ";
+Abbreviate "direction";
+Abbreviate " nothing ";
+Abbreviate " already";
+Abbreviate " of the ";
+Abbreviate " on the ";
+Abbreviate " at the ";
+Abbreviate " in the ";
+Abbreviate " before";
+Abbreviate " small ";
+Abbreviate "to the ";
+Abbreviate " seems ";
+Abbreviate "You can";
+Abbreviate "appears";
+Abbreviate "figure";
+Abbreviate "large ";
+Abbreviate "illage";
+Abbreviate "would ";
+Abbreviate "which ";
+Abbreviate "ed to ";
+Abbreviate "driver";
+Abbreviate ", and ";
+Abbreviate " your ";
+Abbreviate " while";
+Abbreviate " with ";
+Abbreviate "though";
+Abbreviate "button";
+Abbreviate "garden";
+Abbreviate "thing";
+Abbreviate " that";
+Abbreviate " you ";
+Abbreviate "ther ";
 Abbreviate " from";
-Abbreviate " have";
-Abbreviate "which";
-Abbreviate " would";
-Abbreviate " cl";
-Abbreviate " do";
-Abbreviate " village";
-Abbreviate "This";
-Abbreviate " on";
+Abbreviate " the ";
+Abbreviate " look";
+Abbreviate " and ";
+Abbreviate "have ";
+Abbreviate "table";
+Abbreviate "his ";
+Abbreviate " is ";
+Abbreviate "here";
+Abbreviate "The ";
+Abbreviate "ing ";
+Abbreviate "some";
+Abbreviate "You ";
+Abbreviate " to ";
+Abbreviate "n't ";
+Abbreviate " of ";
+Abbreviate "ight";
+Abbreviate "shop";
+Abbreviate "old ";
+Abbreviate "not ";
+Abbreviate "side";
+Abbreviate "tion";
+Abbreviate " you";
+Abbreviate ". It";
+Abbreviate "st ";
+Abbreviate " co";
 Abbreviate "rea";
-Abbreviate " fa";
-Abbreviate " as";
+Abbreviate "out";
+Abbreviate " a ";
+Abbreviate "ver";
+Abbreviate " an";
+Abbreviate "ain";
+Abbreviate "for";
+Abbreviate "le ";
+Abbreviate "ake";
+Abbreviate "the";
+Abbreviate "'s ";
+Abbreviate "er ";
+Abbreviate "es ";
+Abbreviate "ing";
+Abbreviate "are";
+Abbreviate "and";
+Abbreviate "ly ";
+Abbreviate " st";
+Abbreviate "ent";
+Abbreviate " it";
+Abbreviate "ed ";
+Abbreviate " in";
+Abbreviate ", ";
+Abbreviate "e.";
+Abbreviate "s.";
+Abbreviate ". ";
+Abbreviate ".^";
 
 Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
 Constant Headline   "^A small text adventure from Papa's Gong.^";
 
-Release 7;
+Release 8;
+Serial "250827";
+Statusline score;
+ 
+! Calypso's IFID -- see http://babel.ifarchive.org/
+Array UUID_ARRAY string "UUID://4237A5E8-BB07-4ECA-9BC8-B887DE180CEA//"; 
+#Ifdef UUID_ARRAY; #Endif;
 
 #IfnDef USE_PUNY;
 Constant MANUAL_PRONOUNS;
 #EndIf;
 
 Constant MAX_SCORE  15;
+Constant MAX_TIMERS = 1;
 
 ! Standard
 #IfnDef USE_PUNY;
 Include "parser";
 Include "verblib";
 Include "infglk";
+
+Global scope_modified; ! Dummy, so we don't need to ifdef setting it for PunyInform
 #EndIf;
 
 ! Puny
 #IfDef USE_PUNY;
-Constant STATUSLINE_SCORE; Statusline score;
+Constant STATUSLINE_SCORE;
 Constant OPTIONAL_EXTENDED_VERBSET;
 Constant OPTIONAL_PRINT_SCENERY_CONTENTS;
+Constant OPTIONAL_MANUAL_SCOPE;
+Constant OPTIONAL_MANUAL_SCOPE_BOOST;
+Constant MAX_SCOPE = 21; ! 16 is probably the actual max, +5 for margin
+Constant MAX_MULTIPLE_OBJECTS = 15;
+Constant MAX_FLOATING_OBJECTS = 6;
 #IfV5;
 Constant OPTIONAL_PROVIDE_UNDO;
 #Endif;
@@ -126,6 +186,22 @@ Constant RUNTIME_ERRORS = 0;
 Include "globals";
 #EndIf;
 
+Property counter; ! outside, bus, bus_stop
+Property bus_present; ! bus_stop
+
+! We can alias a lot of properties
+Property doorTrigger alias counter; ! lighthouse_lamp
+Property visitorFlag alias counter; ! bottom
+Property wind_direction alias counter; ! weather_vane
+Property caught_coin alias counter; ! rod
+Property monster_present alias counter; ! boating_lake
+Property crumbs_taken alias counter; ! bakery_counter
+Property working alias counter; ! spade
+Property door_opened alias counter; ! cave
+Property animal_word alias counter; ! Button class + button objects
+#Ifdef USE_PUNY;
+Property number alias counter; ! selfobj
+#Endif;
 
 [DeathMessage; print "You have lost"; ];
 
@@ -160,10 +236,7 @@ Constant MSG_LOOK_BEFORE_ROOMNAME 1000;
 		MSG_LOOK_BEFORE_ROOMNAME:
 		 	! Add a newline before the room name. This is standard behaviour in
 			! I6 lib but not in PunyInform.
-			if(turns >= 0) ! Don't add newline in initial Look, or we get double newlines there
-			{
-				new_line;
-			}
+			new_line;
 	}
 	p1 = p2; ! Get rid of warning
 ];
@@ -235,8 +308,8 @@ Object  top "Top of the lighthouse"
  has    light;
 
 Object  -> lighthouse_lamp "main lighthouse lamp"
- private doorTrigger 0,
- with   parse_name [ i;
+ with   doorTrigger 0,
+        parse_name [ i;
           while(NextWord() == 'main' or 'light' or 'lamp' or 'lighthouse' or 'lantern' or 'lens') i++;
           return i;
         ],
@@ -305,6 +378,7 @@ Object  -> stove "stove"
          Receive: if (noun==mouse)
          {
              move mouse to location;
+             scope_modified = true;
              "The mouse smells a rat (fancy that!) and jumps out your hands!";
          }
          SwitchOn: if (self has open)
@@ -322,6 +396,7 @@ Object  -> stove "stove"
              score++;
              remove cheese;
              move cupboard_key to self;
+             scope_modified = true;
              "As the oven heats up, a disgusting smell eminates from
              within, as the cheese melts and departs this world.";
          }
@@ -367,6 +442,7 @@ Object  -> -> fruit "dried piece of fruit"
 	      	 score++;
 		     move cheese to location;
              move mouse to location;
+             scope_modified = true;
 	         "A hungry mouse pops out and eats the fruit, leaving
              behind some rather old looking cheese.";
          }
@@ -386,6 +462,7 @@ Object  -> rug "rug"
             if (glove in rug)
             {
                 move glove to lounge;
+                scope_modified = true;
                 "You find an old glove.";
             }
           Pull,Push:
@@ -402,6 +479,7 @@ Object  ->-> glove "old glove"
          Drop: if (cupboard_key in player)
          {
              move cupboard_key to real_location;
+             scope_modified = true;
              "Dropping the glove, the key becomes too hot to hold
              and you immediately let go.";
          }
@@ -501,6 +579,9 @@ Object  lighthouse_portal "glowing portal",
          Enter:
             print "A blinding flash of light and you materialise
                 elsewhere..^";
+#Ifdef USE_PUNY;
+            new_line;
+#Endif;
             PlayerTo(wizard_shop);
             rtrue;
         ],
@@ -556,7 +637,7 @@ Object  outside "Outside the lighthouse"
                 self.counter = 2+random(3);
             }
         ],
- private counter 3,
+        counter 3,
  has    light;
 
 Object -> lighthouse "lighthouse"
@@ -779,6 +860,9 @@ Object  -> rocks_cave "cave",
         after [;
          Enter:
             print "(By going north)";
+#Ifdef USE_PUNY;
+            new_line;
+#Endif;
             PlayerTo(cave);
             rtrue;
         ],
@@ -835,6 +919,7 @@ Object  -> rod "fishing rod"
                 if (~~self.caught_coin)
                 {
                     move coin to beer_garden;
+                    scope_modified = true;
                     score++;
                     self.caught_coin=true;
                     "You fish out a silver coin from the well, and it
@@ -911,6 +996,7 @@ Object  boating_lake "Boating lake"
              ! remove crumbs, ducks and monster
              remove breadcrumbs;
              remove ducks;
+             scope_modified = true;
              self.monster_present=false;
              score++;
              rtrue;
@@ -1000,8 +1086,8 @@ Object  -> boat "decorative boat"
  has    static enterable container open;
 
 Object  bus "bus"
- private counter 0,
  with   name 'bus',
+        counter 0,
         invent[;
             print "a bus";
             return true;
@@ -1042,6 +1128,7 @@ Object  bus "bus"
                     <Exit self>;
                     keep_silent=false;
                     remove self;
+                    scope_modified = true;
                     bus_stop.bus_present=false;
                     bus_stop.counter=0;
                 }
@@ -1077,6 +1164,10 @@ Object  -> bus_driver "Bus driver"
                  Before you know it, he's got you to a small town
                  and ushers you quickly off..^";
              remove bus;
+             scope_modified = true;
+#Ifdef USE_PUNY;
+             new_line;
+#Endif;
              PlayerTo(town_top);
              rtrue;
          }
@@ -1089,19 +1180,21 @@ Object  bus_stop "Bus stop"
         description "The village bus stop stands here looking rather
             battered, but functional (since its only function is to stay
             upright, it's doing pretty well).  On the bus stop is a timetable.",
-         counter 0, bus_present false,
+        counter 0, bus_present false,
         e_to village_green,
         each_turn [;
             self.counter = self.counter+1;
             if (self.counter==4) ! every 4 turns show up
             {
                 move bus to real_location;
+                scope_modified = true;
                 self.bus_present=true;
                 "A bus arrives.";
             }
             else if (self.bus_present && (~~(player in bus)))
             {
                 remove bus;
+                scope_modified = true;
                 self.bus_present=false;
                 self.counter=0; ! make sure it's another 5 turns
                 "The bus leaves, the driver looking slightly miffed
@@ -1144,6 +1237,7 @@ Object  -> well "well"
             if (~~rod.caught_coin)
             {
                 move coin to self;
+                scope_modified = true;
 
                 "You can see a silver coin glinting at the bottom of
                 the well, presumably thrown by a desperate customer
@@ -1162,6 +1256,7 @@ Object  -> well "well"
         after [;
          Receive:
             remove noun;
+            scope_modified = true;
             "It disappears from view and you get the feeling
             that wasn't a good idea.";
         ],
@@ -1296,6 +1391,7 @@ Include "Grammar";
       move oar to location;
       remove scarecrow;
       score++;
+      scope_modified = true;
 
       "One of the sparks from the ring catches some
         of the dry straw on the scarecrow, immediately
