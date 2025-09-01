@@ -13,7 +13,7 @@ Build using PunyInform:
 path/to/compiler/inform +path/to/punyinform/lib -v5es $#USE_PUNY calypso.inf
 ```
 
-Release 7 of the game was tested with the Inform 6 standard library v6.12.6 and PunyInform v4.0, while using the Inform v6.36 compiler.
+Release 8 of the game was tested with the Inform 6 standard library v6.12.7 and PunyInform v6.0.1, while using the Inform v6.43 compiler.
 
 Read more about the Inform compiler [here](http://inform-fiction.org/) (This site has some good information, but is no longer maintained; The links on the site to download the compiler and library are outdated.)
 
