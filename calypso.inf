@@ -480,7 +480,7 @@ Object  ->-> glove "old glove"
          {
              move cupboard_key to real_location;
              scope_modified = true;
-             "Dropping the glove, the key becomes too hot to hold
+             "The key becomes too hot to hold
              and you immediately let go.";
          }
         ],
