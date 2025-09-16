@@ -476,7 +476,7 @@ Object  ->-> glove "old glove"
         description "One shabby old glove, its matching one has long
             since departed.",
         after [;
-         Drop: if (cupboard_key in player)
+         Drop,Disrobe: if (cupboard_key in player)
          {
              move cupboard_key to real_location;
              scope_modified = true;
