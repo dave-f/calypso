@@ -143,8 +143,8 @@ Abbreviate ".^";
 Constant Story      "CALYPSO"; ! A melody of a past life keeps pulling me back
 Constant Headline   "^A small text adventure from Papa's Gong.^";
 
-Release 8;
-Serial "250827";
+Release 9;
+Serial "250916";
 Statusline score;
  
 ! Calypso's IFID -- see http://babel.ifarchive.org/
