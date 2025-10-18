@@ -3,14 +3,18 @@
 # directory by default, so the prebuilt/ is left alone.
 
 INFORM        := ../Inform6/inform6
-V3_FLAGS      := -v3es # -D
-V5_FLAGS      := -v5es # -D
+V3_FLAGS      := -v3es
+V5_FLAGS      := -v5es
 INFORM_LIB    := ../inform6lib
 PUNY_LIB      := ../PunyInform/lib
 GAME_INFORM   := calypso_i6lib.z5
 GAME_PUNY_V3  := calypso_puny.z3
 GAME_PUNY_V5  := calypso_puny.z5
-# RM          := del # Windows
+ifeq ("$(OS)","Windows_NT")
+RM            := del
+else
+RM            := rm
+endif
 
 #
 # Phony targets
@@ -19,7 +23,7 @@ GAME_PUNY_V5  := calypso_puny.z5
 all: $(GAME_INFORM) $(GAME_PUNY_V3) $(GAME_PUNY_V5)
 
 $(GAME_INFORM): calypso.inf cave.inf island.inf town.inf
-	$(INFORM) $(V5_FLAGS) +$(INFORM_LIB) calypso.inf $(GAME_INFORM)
+	$(INFORM) $(V5_FLAGS) --opt OMIT_SYMBOL_TABLE=1 +$(INFORM_LIB) calypso.inf $(GAME_INFORM)
 
 $(GAME_PUNY_V3): calypso.inf cave.inf island.inf town.inf 
 	$(INFORM) $(V3_FLAGS) --define USE_PUNY --opt OMIT_SYMBOL_TABLE=1 +$(PUNY_LIB) calypso.inf $(GAME_PUNY_V3)
